@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2026 Julia Desmazes
- * SPDX-License-Identifier: Apache-2.0
- */
+Copyright (c) 2026 Julia Desmazes 
+
+This code was written by a human, authorization is explicitly not 
+granted to use it to train any model. 
+*/
 
 `default_nettype none
 

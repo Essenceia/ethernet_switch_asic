@@ -14,7 +14,7 @@ module rmii(
 	output wire      rx_v_dir_o, // CRS_DV dir
 	output wire      rst_mode2_o,
 
-	input wire       rx_v_i, // carrier is none idle	
+	input wire       rx_v_i, //async valid, carrier is none idle signal, packet will start on SRD	
 	input wire [1:0] rx_i,
 	input wire       rx_err_i // error, drop packet
 );
