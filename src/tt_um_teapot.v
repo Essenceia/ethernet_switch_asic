@@ -103,8 +103,6 @@ rmii m_rmii(
 	.mac_tx_i()
 );
 
-// mac config 
-
 // rx mac 
 mac_rx m_mac_rx(
 	.clk(clk),
