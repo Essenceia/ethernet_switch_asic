@@ -52,12 +52,14 @@ reg  [BUF_W-3:0] buff_q;
 wire [BUF_W-1:0] buff;
 wire frame_start;
 
-localparam CNT_W = $mac(ADDR_CNT_W, FRAME_TYPE_CNT);
+localparam CNT_W = $max(ADDR_CNT_W, FRAME_TYPE_CNT);
 reg  [CNT_W-1:0] cnt_q; // shared counter 
 
 wire dst_addr_match; 
 wire dst_addr_group; 
 
+wire body_start_next;
+reg  body_start_q;
 wire type_vlan; 
 wire vid_match;
   
@@ -104,10 +106,9 @@ always @(posedge clk)
 // detect SFD
 assign frame_start = buff[SFD_W-1:0] == SFD; 
 
-
 // filter out packets that don't match our MAC address (or multicast)
 always @(posedge clk)
-	if ((frame_start & fsm_q == DETECT_SFD) && (fsq_q == SRC_MAC & cnt_q == ADDR_CNT)) 
+	if ((frame_start & fsm_q == DETECT_SFD) && (fsm_q == SRC_MAC & cnt_q == ADDR_CNT)) 
 		cnt_q <= {ADDR_CNT_W{1'b0}};
 	else
 		cnt_q <= cnt_q + {{ADDR_CNT_W-1{1'b0}}, 1'b1};
@@ -121,6 +122,9 @@ assign dst_addr_group = buff[MAC_W-8];
 assign type_vlan = buff[FRAME_TYPE_W-1:0] == TYPE_VLAN; 
 assign vid_match = buff[VID_W-1:0] == vid_i;
 
+assign body_start_next = (cnt_q == FRAME_TYPE_CNT) & (((fsm_q == PKT_TYPE) & ~type_vlan) 
+				       | (fsm_q == VLAN)); 
+
 // forward 
 always @(posedge clk) 
 	if ((fsm_q == DST_MAC) & (cnt_q == ADDR_CNT))
@@ -133,7 +137,7 @@ always @(posedge clk)
 	if (fsm_q == IDLE) 
 		err_q <= 1'b0; // IFG guaranties no back to back frames
 	else 
-		err_q <=  err_q | (mac_v_i & mac_err_i) | fcs_err; 
+		err_q <=  err_q | (mac_v_i & mac_err_i) | pkt_fcs; 
 
 // FCS 
 crc m_fcs(
@@ -156,8 +160,10 @@ always @(posedge clk)
 	else
 		delay_data_v_q <= {delay_data_v_q[DELAY_DEPTH-2:0], fsm_q == BODY & fwd_q};
 
-always @(posedge clk)
-	delay_data_start_q <= body_start_q;	
+always @(posedge clk) begin
+	body_start_q       <= body_start_next; 
+	delay_data_start_q <= {delay_data_start_q[DELAY_DEPTH-2:0], body_start_q};	
+end
 
 // To higher level
 assign data_v_o     = delay_data_v_q[DELAY_DEPTH-1];
