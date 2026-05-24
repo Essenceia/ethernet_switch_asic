@@ -49,13 +49,13 @@ reg [3:0] fsm_q;
 reg err_q; 
 reg fwd_q; // forward packet to higher level, not filted out
 
-localparam BUF_W = $max(MAC_W,SFD_W,FCS_W);
+localparam BUF_W = MAC_W; // max(MAC_W,SFD_W,FCS_W)
 
 reg  [BUF_W-3:0] buff_q;
 wire [BUF_W-1:0] buff;
 wire frame_start;
 
-localparam CNT_W = $max(ADDR_CNT_W, FRAME_TYPE_CNT);
+localparam CNT_W = ADDR_CNT_W; // $max(ADDR_CNT_W, FRAME_TYPE_CNT);
 reg  [CNT_W-1:0] cnt_q; // shared counter 
 
 wire dst_addr_match; 

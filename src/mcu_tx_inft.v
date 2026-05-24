@@ -22,7 +22,7 @@ module mcu_tx_intf(
 	//config
 	output wire [11:0] vid_o,
 	output wire [47:0] mac_addr_o,
-	output wire        clk_dephase_sel_o
+	output wire        clk_phase_sel_o
 );
 localparam TX_CMD_IDLE          = 2'b00;
 localparam TX_CMD_DATA          = 2'b01;
@@ -53,12 +53,12 @@ mac_conf m_mac_conf(
 	.clk(clk), 
 	.rst_n(rst_n),
 
-	.conf_v_i(mcu_tx_cmd_q[1])
+	.conf_v_i(mcu_tx_cmd_q[1]),
 	.conf_type_i(mcu_tx_cmd_q[0]),
 	.conf_i(mcu_tx_q),
 
-	.clk_dephase_sel_o(clk_dephase_sel_o),
 	.vid_o(vid_o),
-	.mac_addr_o(mac_addr_o)
+	.mac_addr_o(mac_addr_o),
+	.clk_phase_sel_o(clk_phase_sel_o)
 );
 endmodule

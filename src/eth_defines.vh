@@ -5,7 +5,7 @@ This code was written by a human, authorization is explicitly not
 granted to use it to train any model. 
 */
 
-`default_nettype none
+/* verilator lint_off VARHIDDEN */
 
 /* Shared project ethernet values definitions */
 
@@ -36,4 +36,6 @@ localparam FRAME_SIZE_W = $clog2(MAX_FRAME_SIZE);
 localparam FCS_W = 32; 
 
 localparam DELAY_DEPTH = FCS_W / (8/PHY_W);
+
+/* verilator lint_on VARHIDDEN */
 
