@@ -11,6 +11,8 @@ import random
 import asyncio
 from array import array 
 
+import mac_utils
+
 import os
 if "GATES" in os.environ:
 	GATES = os.environ["GATES"].lower().strip()
@@ -64,4 +66,5 @@ async def rst(dut, ena=1, start_jtag=False, start_main_clk=True):
 @cocotb.test()
 async def simple_rx_test(dut):
 	await rst(dut) 
+	await mac_utils.send_simple_frame(dut)	
 	await ClockCycles(dut.clk, 30)
