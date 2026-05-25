@@ -21,6 +21,16 @@ class MAC_header(NamedTuple):
 	vlan_tag: Optional[dot1q] = None
 	ethtype: bytes = bytes(2)
 
+	def raw(self):
+		r = bytearray()
+		r+= self.dst
+		r+= self.src
+		if self.vlan_tag is not None:
+			r += self.vlan_tag.tpid
+			r += self.vlan_tag.tci
+		r+= self.ethtype
+		return r
+
 @dataclass
 class eth_frame:
 	sfd: bytes = b'\xab'
@@ -30,13 +40,13 @@ class eth_frame:
 	
 	def random_body(self):
 		l = random.randint(48,2000)
-		body = bytes(0)
+		self.body = bytes(0)
 		for i in range(0,l):
-			body.append(random.randint(0,255))
+			self.body.append(random.randint(0,255))
 		self.header = self.header._replace(ethtype = struct.pack('!p', l))
  
 	def __init__(self, dst, src, vlan_tag = None):
-		if vlan_tag is not None: 
+		if self.header.vlan_tag is not None: 
 			self.header = MAC_header(dst,src,vlan_tag = dot1q(tci=vlan_tag))
 		else:
 			self.header = MAC_header(dst, src) 
@@ -46,7 +56,11 @@ class eth_frame:
 
 	def raw(self):
 		self.calc_fcs()
-		return struct.pack('!pppp', *dataclasses.astuple(self))
+		r = bytearray()
+		r += self.sfd
+		r += self.header.raw()
+		r += self.body
+		return r
 
 async def phy_stream_frame(dut, raw):
 	preamble = random.randinit(1,10)
