@@ -18,52 +18,77 @@ on the module parameters and reset to default
 on each sync reset.
 */
 module mac_conf #(
+	localparam PHY_W = 2,
 	localparam VID_W = 12,
-	localparam MAC_ADDR_W = 48,
-	parameter TX_CLK_PHASE = 1'b1, // 180 degrees phase from ref_clk
-	parameter [VID_W-1:0]      VID = 12'hDAD,
-	parameter [MAC_ADDR_W-1:0] MAC_ADDR = 48'h0090CF00BEEF // nortel manifacturer
+	localparam MAC_W = 48,
+	parameter DEFAULT_TX_CLK_PHASE = 1'b1, // 180 degrees phase from ref_clk
+	parameter [VID_W-1:0] DEFAULT_VID = 12'hDAD,
+	parameter [MAC_W-1:0] DEFAULT_MAC = 48'h0090CF00BEEF // nortel manifacturer
 )
 (
 	input clk, 
 	input rst_n,
 	
-	input wire       conf_v_i,
-	input wire       conf_type_i,//0: phase, 1: mac/vid
-	input wire [1:0] conf_i,
+	input wire           data_v_i,
+	input wire           data_conf_i,
+	input wire           data_start_i,
+	input wire           data_err_i,
+	input wire [PHY_W:0] data_i,
 
-	output wire                  clk_phase_sel_o,
-	output wire [VID_W-1:0]      vid_o,
-	output wire [MAC_ADDR_W-1:0] mac_addr_o
+	output wire             clk_phase_sel_o,
+	output wire [VID_W-1:0] vid_o,
+	output wire [MAC_W-1:0] mac_addr_o
 );
-localparam CONF_TYPE_PHASE = 1'b0;
-localparam CONF_TYPE_MAC_VID = 1'b1;
 
 /* Configuration packet types :
 
-0 : phase pkt type
-pkt : [ x <phase> ] 2 bits wide, single transfer
-
-1: mac/vid pkt type 
-pkt : [ mac ] [ vid ] 48+12=60 bits wide, 30 transfers
+[ MAC address [47:0] ][ VID [15:0] ][ phase [1:0] ][ padding ]
+0                    47            63             65       383 
+ 
 */
-reg                  phase_sel_q;
-reg [MAC_ADDR_W-1:0] mac_addr_q;
-reg [VID_W-1:0]      vid_q;
+localparam PKT_DATA_W       = MAC_W + VID_W + 1;
+localparam PKT_DATA_CNT_VAL = (PKT_DATA_W/PHY_W) - 1;
+localparam PKT_DATA_CNT_W   = $clog2(PKT_DATA_CNT_VAL);
+/* verilator lint_off WIDTHTRUNC */
+localparam [PKT_DATA_CNT_W-1:0] PKT_DATA_CNT = PKT_DATA_CNT_VAL;
+/* verilator lint_on WIDTHTRUNC */
+
+// fsm 
+localparam IDLE  = 1'b0;
+localparam CONF  = 1'b1;
+
+reg [0:0] fsm_q;
+reg [PKT_DATA_CNT_W-1:0] cnt_q;
+reg [1:0]       phase_sel_q;// only bottom bit is used, making 2 bits wide to align with PHY_W
+reg [MAC_W-1:0] mac_addr_q;
+reg [VID_W-1:0] vid_q;
+
+/* fsm 
+assuming errors will show up before payload
+can't handle errors if they occure after header
+given we don't have the area to do config store and forward */
+always @(posedge clk) 
+	if (~rst_n) 
+		fsm_q <= IDLE; 
+	else begin
+		case(fsm_q)
+			IDLE: fsm_q <= data_start_i & ~data_err_i & data_conf_i ? CONF: IDLE; 
+			CONF: fsm_q <=  cnt_q == PKT_DATA_CNT_VAL? IDLE: CONF;
+		endcase
+	end
+end
+
+always @(posedge clk) 
+	if (fsm_q == IDLE) cnt_q <= {PKT_DATA_CNT_W{1'b0}};
+	else cnt_q <= { {PKT_DATA_CNT_W-1{1'b0}}, 1'b1};
 
 always @(posedge clk) 
 	if (~rst_n) 
-		phase_sel_q <= TX_CLK_PHASE;
-	else if (conf_v_i & conf_type_i == CONF_TYPE_PHASE)
-		phase_sel_q <= conf_i[0];
-
-always @(posedge clk) 
-	if (~rst_n) 
-		{ mac_addr_q, vid_q} <= { MAC_ADDR, VID};
-	else if (conf_v_i & conf_type_i == CONF_TYPE_MAC_VID)
-		{ mac_addr_q, vid_q} <= {mac_addr_q[MAC_ADDR_W-3:0], vid_q, conf_i};
+		{ mac_addr_q, vid_q, phase_sel_q} <= { DEFAULT_MAC, DEFAULT_VID ,1'b0, DEFAULT_TX_CLK_PHASE};
+	else if (fsm_q == CONF)
+		{ mac_addr_q, vid_q, phase_sel_q} <= {mac_addr_q[MAC_W-3:0], vid_q, phase_sel_q, data_i };
 		
-assign clk_phase_sel_o = phase_sel_q;
+assign clk_phase_sel_o = phase_sel_q[0];
 assign mac_addr_o = mac_addr_q;
 assign vid_o = vid_q;
 

@@ -25,11 +25,12 @@ wire        clk_phase_sel;
 wire [1:0] mcu_tx_cmd;
 wire [1:0] mcu_tx;
 
-wire       data_rx_v;
-wire       data_rx_conf;
-wire       data_rx_start;
-wire       data_rx_err;
-wire [1:0] data_rx;
+wire        data_rx_v;
+wire        data_rx_conf;
+wire        data_rx_start;
+wire        data_rx_err;
+wire [1:0]  data_rx;
+wire [47:0] data_rx_src_mac; 
 
 wire       mac_tx_v;
 wire       mac_tx_start;
@@ -129,23 +130,41 @@ mac_rx m_mac_rx(
 	.data_conf_o(data_rx_conf),
 	.data_start_o(data_rx_start),
 	.data_err_o(data_rx_err),
-	.data_o(data_rx)
+	.data_o(data_rx),
+	.data_src_mac(data_src_mac)
 );
 
-// tx mcu intf
-mcu_tx_intf m_mcu_tx_intf(
+//application
+app_wrapper m_app_wrapper(
 	.clk(clk),
 	.rst_n(rst_n),
 
-	.mcu_tx_cmd_i(mcu_tx_cmd),
-	.mcu_tx_i(mcu_tx),
-	
-	.mac_tx_v_o(mac_tx_v),
-	.mac_tx_start_o(mac_tx_start),
-	.mac_tx_o(mac_tx),
+	.data_v_i      (data_rx_v),
+	.data_conf_i   (data_rx_conf),
+	.data_start_i  (data_rx_start),
+	.data_err_i    (data_rx_err),
+	.data_i        (data_rx),
+	.data_src_mac_i(data_rx_src_mac),
 
-	.vid_o(vid),
-	.mac_addr_o(mac_addr),
+	.mac_tx_v_o      (),
+	.mac_tx_acc_o    (),
+	.mac_tx_o        (),
+	.mac_tx_dst_mac_o()
+);
+
+// playpen config
+mac_conf m_mac_conf(
+	.clk(clk),
+	.rst_n(rst_n),
+
+	.data_v_i    (data_rx_v),
+	.data_conf_i (data_rx_conf),
+	.data_start_i(data_rx_start),
+	.data_err_i  (data_rx_err),
+	.data_i      (data_rx),
+
+	.vid_o          (vid),
+	.mac_addr_o     (mac_addr),
 	.clk_phase_sel_o(clk_phase_sel)
 );
 

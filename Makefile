@@ -17,6 +17,7 @@ SW_DIR := firmware
 TB_DIR := test
 TV_DIR := tv
 SRC_DIR := src
+BF16_SRC_DIR := $(SRC_DIR)/bf16/src
 CONF := conf
 DEBUG_FLAG := $(if $(debug), debug=1)
 DEFINES := $(if $(wave),wave=1)
@@ -61,7 +62,7 @@ endif
 # Lint #
 ########
 
-entry_deps := $(wildcard $(SRC_DIR)/*.v) $(wildcard $(SRC_DIR)/*.vh) 
+entry_deps := $(wildcard $(SRC_DIR)/*.v) $(wildcard $(SRC_DIR)/*.vh) $(wildcard $(BF16_SRC_DIR)/*.v) 
 fpga_deps := $(entry_deps) $(wildcard $(FPGA_DIR)/*.v) $(wildcard $(SRC_DIR)/*.vh)
 gate_phony_deps := $(IMPLEM_DIR)/$(PROJET_NAME).nl.v $(GATE_PHONY_LIB)/sg13g2_stdcell_phony.v 
 

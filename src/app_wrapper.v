@@ -18,17 +18,17 @@ module app_wrapper #(
 	input clk, 
 	input wire rst_n, 
 
-	input wire [47:0] src_mac_i, 
-
 	input wire             data_v_i,
 	input wire             data_conf_i,
 	input wire             data_start_i,
 	input wire             data_err_i,
 	input wire [PHY_W-1:0] data_i,
+	input wire [47:0]      data_src_mac_i, 
 
-	output wire            phy_tx_v_o,// request and valid
-	input wire             phy_tx_acc_i, // accept
-	output wire [1:0]      phy_tx_o
+	output wire            mac_tx_v_o,// request and valid
+	input wire             mac_tx_acc_i, // accept
+	output wire [1:0]      mac_tx_o,
+	output wire [47:0]     mac_tx_dst_mac_o// guarantied to not change until packet header has finished sending
 );
 localparam PKT_DATA_W       = 32;
 localparam PKT_DATA_CNT_VAL = (PKT_DATA_W/PHY_W) - 1;
@@ -122,7 +122,7 @@ always @(posedge clk) begin
 		case(tx_fsm_q)
 			TX_IDLE   : tx_fsm_q <= (rx_fsm_q == RX_READY) & ~data_err_i: TX_IDLE;
 			TX_CAPTURE: tx_fsm_q <= TX_REQ;
-			TX_REQ    : tx_fsm_q <= phy_tx_acc_i? TX_STREAM: TX_REQ;
+			TX_REQ    : tx_fsm_q <= mac_tx_acc_i? TX_STREAM: TX_REQ;
 		    TX_STREAM : tx_fsm_q <= (tx_cnt_q == FRAME_CNT) ? TX_IDLE: TX_STREAM;	
 		endcase
 	end
@@ -130,13 +130,15 @@ end
 
 always @(posedge clk) 
 	if (tx_fsm_q == TX_REQ) tx_cnt_q <= {FRAME_CNT_W{1'b0}};
-	else if (phy_tx_acc_i) tx_cnt_q <= tx_cnt_q + {{FRAME_CNT_W-1{1'b0}}, 1'b1};
+	else if (mac_tx_acc_i) tx_cnt_q <= tx_cnt_q + {{FRAME_CNT_W-1{1'b0}}, 1'b1};
 
 always @(posedge clk) 
 	if (tx_fsm_q == TX_CAPTURE) res_q <= mul_res;
 	else res_q <= {{PHY_W{1'b0}}, res_q[RES_W-1:2]}; // padd with 0s
 
-assign phy_tx_v_o = (tx_fsm_q == TX_REQ) | (tx_fsm_q == TX_STREAM);
-assign phy_tx_o = res_q[1:0];
+assign mac_tx_v_o = (tx_fsm_q == TX_REQ) | (tx_fsm_q == TX_STREAM);
+assign mac_tx_o = res_q[1:0];
+assign mac_tx_dst_mac_o = data_src_mac_i;
+
 endmodule
 

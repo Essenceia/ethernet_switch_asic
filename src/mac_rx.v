@@ -14,7 +14,7 @@ the FCS.
 */ 
 module mac_rx #(
 	// 802a playpen ethertypes 
-	parameter [15:0] APP_ETHTYPE    = 16'h88B5
+	parameter [15:0] APP_ETHTYPE  = 16'h88B5,
 	parameter [15:0] CONF_ETHTYPE = 16'h88B6
 )(
 	input clk, 
@@ -28,13 +28,12 @@ module mac_rx #(
 	input wire        rx_err_i,
 
 	// to accelerator wrapper
-	output wire [47:0] src_mac_o, 
-
 	output wire        data_v_o,
 	output wire [15:0] data_conf_o,
 	output wire        data_start_o,
 	output wire        data_err_o,
-	output wire [1:0]  data_o
+	output wire [1:0]  data_o,
+	output wire [47:0] data_src_mac_o 
 ); 
 // physical interface
 localparam PHY_W = 2; 
@@ -93,20 +92,20 @@ wire frame_start;
 localparam CNT_W = ADDR_CNT_W; // $max(ADDR_CNT_W, FRAME_TYPE_CNT);
 reg  [CNT_W-1:0] cnt_q; // shared counter 
 
-wire dst_addr_match; 
-wire dst_addr_broadcat; 
+reg [MAC_W-1:0] src_mac_q;
+wire            dst_addr_match; 
+wire            dst_addr_broadcat; 
 
-wire is_type;
-reg  body_start_q;
-wire type_vlan; 
-wire vid_match;
+wire            is_type;
+reg             body_start_q;
+wire            type_vlan; 
+wire            vid_match;
   
 wire [FCS_W-1:0] pkt_fcs;
 wire             fcs_err; 
-
-// fsm 
 wire eof; 
 
+// fsm 
 always @(posedge clk) begin
 	if (~rst_n) 
 		fsm_q <= IDLE; 
@@ -181,6 +180,11 @@ always @(posedge clk)
 	else if (is_type)
 		fwd_q <= fwd_q & ethtype_match;
 
+// src mac capture 
+always @(posedge clk) 
+	if ((fsm_q == SRC_MAC) & (cnt_q[ADDR_CNT_W-1:0] == ADDR_CNT))
+		src_mac_q <= buff[MAC_W-1:0];
+ 
 // sticky error 
 always @(posedge clk) 
 	if (fsm_q == IDLE) 
@@ -209,14 +213,14 @@ always @(posedge clk)
 	else
 		delay_data_v_q <= {delay_data_v_q[DELAY_DEPTH-2:0], fsm_q == BODY & fwd_q};
 
-always @(posedge clk) begin
+always @(posedge clk) 
 	delay_data_start_q <= {delay_data_start_q[DELAY_DEPTH-2:0], is_type & ethtype_match & fwd_q};	
-end
 
 assign data_v_o       = delay_data_v_q[DELAY_DEPTH-1];
 assign data_conf_o    = pkt_conf_q; 
 assign data_start_o   = delay_data_start_q[DELAY_DEPTH-1]; 
 assign data_err_o     = err_q;
 assign data_o         = buff_q[FCS_W+1:FCS_W];
+assign data_src_mac_o = src_mac_q;
 
 endmodule
