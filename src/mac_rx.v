@@ -23,8 +23,10 @@ module mac_rx(
 	input [1:0]  rx_i, 
 	input        rx_err_i,
 
-	output [1:0] mcu_cmd_o,
-	output [1:0] mcu_o
+	output       data_v_o,
+	output       data_start_o,
+	output       data_err_o,
+	output [1:0] data_o
 ); 
 // physical interface
 localparam PHY_W = 2; 
@@ -177,26 +179,22 @@ assign fcs_err = eof & |(pkt_fcs);// end of packet, check fcs
 
 // data buffer, excluding the FCS without keeping track of
 // the data width for portability
-reg [DELAY_DEPTH-1:0] delay_mcu_v_q; 
-reg [DELAY_DEPTH-1:0] delay_mcu_start_q; 
+reg [DELAY_DEPTH-1:0] delay_data_v_q; 
+reg [DELAY_DEPTH-1:0] delay_data_start_q; 
 
 always @(posedge clk)
 	if (~rst_n | eof)
-		delay_mcu_v_q <= {DELAY_DEPTH{1'b0}};
+		delay_data_v_q <= {DELAY_DEPTH{1'b0}};
 	else
-		delay_mcu_v_q <= {delay_mcu_v_q[DELAY_DEPTH-2:0], fsm_q == BODY & fwd_q};
+		delay_data_v_q <= {delay_data_v_q[DELAY_DEPTH-2:0], fsm_q == BODY & fwd_q};
 
 always @(posedge clk) begin
-	delay_mcu_start_q <= {delay_mcu_start_q[DELAY_DEPTH-2:0], body_start_next & fwd_q};	
+	delay_data_start_q <= {delay_data_start_q[DELAY_DEPTH-2:0], body_start_next & fwd_q};	
 end
 
-// To mcu, cmd :
-// 00 - idle
-// 01 - early
-// 10 - valid
-// 11 - error
-assign mcu_cmd_o[0]  = err_q | delay_mcu_start_q[DELAY_DEPTH-1]; 
-assign mcu_cmd_o[1]  = delay_mcu_v_q[DELAY_DEPTH-1];
-assign mcu_o         = buff_q[FCS_W+1:FCS_W];
+assign data_v_o       = delay_data_v_q[DELAY_DEPTH-1];
+assign data_start_o   = delay_data_start_q[DELAY_DEPTH-1]; 
+assign data_err_o     = err_q;
+assign data_o         = buff_q[FCS_W+1:FCS_W];
 
 endmodule
