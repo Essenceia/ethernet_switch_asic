@@ -1,39 +1,64 @@
 [*]
-[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Mon Nov 20 16:00:28 2023
+[*] GTKWave Analyzer v3.3.115 (w)1999-2023 BSI
+[*] Mon Jun  1 16:55:05 2026
 [*]
-[dumpfile] "/home/uri/p/tt-new-template-proto/test/tb.fst"
-[dumpfile_mtime] "Mon Nov 20 15:58:34 2023"
-[dumpfile_size] 1110
-[savefile] "/home/uri/p/tt-new-template-proto/test/tb.gtkw"
-[timestart] 0
-[size] 1376 600
+[dumpfile] "/home/pitchu/asic/teapot/test/tb.vcd"
+[dumpfile_mtime] "Mon Jun  1 16:50:44 2026"
+[dumpfile_size] 39300
+[savefile] "/home/pitchu/asic/teapot/test/tb.gtkw"
+[timestart] 4985000
+[size] 1910 470
 [pos] -1 -1
-*-24.534533 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-19.534533 6219000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] tb.
+[treeopen] tb.m_dut.
+[treeopen] tb.m_dut.m_mac_tx.
 [sst_width] 297
-[signals_width] 230
+[signals_width] 402
 [sst_expanded] 1
-[sst_vpaned_height] 158
+[sst_vpaned_height] 211
+@c00022
+#{mac tx} (0)tb.m_dut.m_mac_rx.fsm_q[3:0] (1)tb.m_dut.m_mac_rx.fsm_q[3:0] (2)tb.m_dut.m_mac_rx.fsm_q[3:0] (3)tb.m_dut.m_mac_rx.fsm_q[3:0] tb.m_dut.m_mac_rx.clk tb.m_dut.m_mac_rx.fcs_err tb.m_dut.m_mac_rx.eof tb.m_dut.m_mac_rx.data_conf_o tb.m_dut.m_mac_rx.data_err_o (0)tb.m_dut.m_mac_rx.data_o[1:0] (1)tb.m_dut.m_mac_rx.data_o[1:0] tb.m_dut.m_mac_rx.data_v_o tb.m_dut.m_mac_rx.data_start_o (0)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (1)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (2)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (3)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (4)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (5)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (6)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (7)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (8)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (9)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (10)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (11)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (12)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (13)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (14)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (15)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (16)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (17)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (18)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (19)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (20)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (21)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (22)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (23)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (24)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (25)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (26)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (27)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (28)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (29)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (30)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (31)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (32)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (33)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (34)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (35)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (36)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (37)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (38)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (39)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (40)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (41)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (42)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (43)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (44)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (45)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (46)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (47)tb.m_dut.m_mac_rx.phy_mac_i[47:0] (0)tb.m_dut.m_mac_rx.buff[47:0] (1)tb.m_dut.m_mac_rx.buff[47:0] (2)tb.m_dut.m_mac_rx.buff[47:0] (3)tb.m_dut.m_mac_rx.buff[47:0] (4)tb.m_dut.m_mac_rx.buff[47:0] (5)tb.m_dut.m_mac_rx.buff[47:0] (6)tb.m_dut.m_mac_rx.buff[47:0] (7)tb.m_dut.m_mac_rx.buff[47:0] (8)tb.m_dut.m_mac_rx.buff[47:0] (9)tb.m_dut.m_mac_rx.buff[47:0] (10)tb.m_dut.m_mac_rx.buff[47:0] (11)tb.m_dut.m_mac_rx.buff[47:0] (12)tb.m_dut.m_mac_rx.buff[47:0] (13)tb.m_dut.m_mac_rx.buff[47:0] (14)tb.m_dut.m_mac_rx.buff[47:0] (15)tb.m_dut.m_mac_rx.buff[47:0] (16)tb.m_dut.m_mac_rx.buff[47:0] (17)tb.m_dut.m_mac_rx.buff[47:0] (18)tb.m_dut.m_mac_rx.buff[47:0] (19)tb.m_dut.m_mac_rx.buff[47:0] (20)tb.m_dut.m_mac_rx.buff[47:0] (21)tb.m_dut.m_mac_rx.buff[47:0] (22)tb.m_dut.m_mac_rx.buff[47:0] (23)tb.m_dut.m_mac_rx.buff[47:0] (24)tb.m_dut.m_mac_rx.buff[47:0] (25)tb.m_dut.m_mac_rx.buff[47:0] (26)tb.m_dut.m_mac_rx.buff[47:0] (27)tb.m_dut.m_mac_rx.buff[47:0] (28)tb.m_dut.m_mac_rx.buff[47:0] (29)tb.m_dut.m_mac_rx.buff[47:0] (30)tb.m_dut.m_mac_rx.buff[47:0] (31)tb.m_dut.m_mac_rx.buff[47:0] (32)tb.m_dut.m_mac_rx.buff[47:0] (33)tb.m_dut.m_mac_rx.buff[47:0] (34)tb.m_dut.m_mac_rx.buff[47:0] (35)tb.m_dut.m_mac_rx.buff[47:0] (36)tb.m_dut.m_mac_rx.buff[47:0] (37)tb.m_dut.m_mac_rx.buff[47:0] (38)tb.m_dut.m_mac_rx.buff[47:0] (39)tb.m_dut.m_mac_rx.buff[47:0] (40)tb.m_dut.m_mac_rx.buff[47:0] (41)tb.m_dut.m_mac_rx.buff[47:0] (42)tb.m_dut.m_mac_rx.buff[47:0] (43)tb.m_dut.m_mac_rx.buff[47:0] (44)tb.m_dut.m_mac_rx.buff[47:0] (45)tb.m_dut.m_mac_rx.buff[47:0] (46)tb.m_dut.m_mac_rx.buff[47:0] (47)tb.m_dut.m_mac_rx.buff[47:0] (0)tb.m_dut.m_mac_rx.cnt_q[4:0] (1)tb.m_dut.m_mac_rx.cnt_q[4:0] (2)tb.m_dut.m_mac_rx.cnt_q[4:0] (3)tb.m_dut.m_mac_rx.cnt_q[4:0] (4)tb.m_dut.m_mac_rx.cnt_q[4:0] (0)tb.m_dut.m_mac_rx.ADDR_CNT (1)tb.m_dut.m_mac_rx.ADDR_CNT (2)tb.m_dut.m_mac_rx.ADDR_CNT (3)tb.m_dut.m_mac_rx.ADDR_CNT (4)tb.m_dut.m_mac_rx.ADDR_CNT (0)tb.m_dut.m_mac_rx.ADDR_CNT_W (1)tb.m_dut.m_mac_rx.ADDR_CNT_W (2)tb.m_dut.m_mac_rx.ADDR_CNT_W (3)tb.m_dut.m_mac_rx.ADDR_CNT_W (4)tb.m_dut.m_mac_rx.ADDR_CNT_W (5)tb.m_dut.m_mac_rx.ADDR_CNT_W (6)tb.m_dut.m_mac_rx.ADDR_CNT_W (7)tb.m_dut.m_mac_rx.ADDR_CNT_W (8)tb.m_dut.m_mac_rx.ADDR_CNT_W (9)tb.m_dut.m_mac_rx.ADDR_CNT_W (10)tb.m_dut.m_mac_rx.ADDR_CNT_W (11)tb.m_dut.m_mac_rx.ADDR_CNT_W (12)tb.m_dut.m_mac_rx.ADDR_CNT_W (13)tb.m_dut.m_mac_rx.ADDR_CNT_W (14)tb.m_dut.m_mac_rx.ADDR_CNT_W (15)tb.m_dut.m_mac_rx.ADDR_CNT_W (16)tb.m_dut.m_mac_rx.ADDR_CNT_W (17)tb.m_dut.m_mac_rx.ADDR_CNT_W (18)tb.m_dut.m_mac_rx.ADDR_CNT_W (19)tb.m_dut.m_mac_rx.ADDR_CNT_W (20)tb.m_dut.m_mac_rx.ADDR_CNT_W (21)tb.m_dut.m_mac_rx.ADDR_CNT_W (22)tb.m_dut.m_mac_rx.ADDR_CNT_W (23)tb.m_dut.m_mac_rx.ADDR_CNT_W (24)tb.m_dut.m_mac_rx.ADDR_CNT_W (25)tb.m_dut.m_mac_rx.ADDR_CNT_W (26)tb.m_dut.m_mac_rx.ADDR_CNT_W (27)tb.m_dut.m_mac_rx.ADDR_CNT_W (28)tb.m_dut.m_mac_rx.ADDR_CNT_W (29)tb.m_dut.m_mac_rx.ADDR_CNT_W (30)tb.m_dut.m_mac_rx.ADDR_CNT_W (31)tb.m_dut.m_mac_rx.ADDR_CNT_W tb.m_dut.m_mac_rx.dst_addr_match tb.m_dut.m_mac_rx.fwd_q
+@22
+tb.m_dut.m_mac_rx.fsm_q[3:0]
 @28
-tb.user_project.ena
+tb.m_dut.m_mac_rx.clk
+tb.m_dut.m_mac_rx.fcs_err
+tb.m_dut.m_mac_rx.eof
+tb.m_dut.m_mac_rx.data_conf_o
+tb.m_dut.m_mac_rx.data_err_o
+tb.m_dut.m_mac_rx.data_o[1:0]
+tb.m_dut.m_mac_rx.data_v_o
+tb.m_dut.m_mac_rx.data_start_o
+@22
+tb.m_dut.m_mac_rx.phy_mac_i[47:0]
+tb.m_dut.m_mac_rx.buff[47:0]
+@24
+tb.m_dut.m_mac_rx.cnt_q[4:0]
+tb.m_dut.m_mac_rx.ADDR_CNT
+@420
+tb.m_dut.m_mac_rx.ADDR_CNT_W
+@28
+tb.m_dut.m_mac_rx.dst_addr_match
+tb.m_dut.m_mac_rx.fwd_q
+@1401200
+-group_end
+@200
+-app
+@28
+tb.m_dut.m_app_wrapper.data_conf_i
+tb.m_dut.m_app_wrapper.data_start_i
+tb.m_dut.m_app_wrapper.data_v_i
+tb.m_dut.m_app_wrapper.rx_fsm_q[1:0]
+@22
+tb.m_dut.m_app_wrapper.payload_q[31:0]
+@28
+tb.m_dut.m_app_wrapper.tx_fsm_q[1:0]
+@22
+tb.m_dut.m_app_wrapper.tx_cnt_q[7:0]
+@200
+-tx
 @29
-tb.user_project.clk
-@28
-tb.user_project.rst_n
-@200
--Inputs
-@22
-tb.user_project.ui_in[7:0]
-@200
--Bidirectional Pins
-@22
-tb.user_project.uio_in[7:0]
-tb.user_project.uio_oe[7:0]
-tb.user_project.uio_out[7:0]
-@200
--Output Pins
-@22
-tb.user_project.uo_out[7:0]
+tb.m_dut.m_mac_tx.fsm_q[2:0]
 [pattern_trace] 1
 [pattern_trace] 0

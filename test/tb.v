@@ -36,14 +36,17 @@ module tb ();
 	wire [1:0] phy_rx;
 	wire       phy_rx_v;
 	wire       phy_rx_err;
-	wire [1:0] mcu_rx;
-	wire [1:0] mcu_rx_cmd;
+
+	// TX parth 
+	wire [1:0] phy_tx;
+	wire       phy_tx_v;
 
 	assign uio_in[1:0] = phy_rx;
 	assign uio_in[2]   = phy_rx_v;
 	assign uio_in[3]   = phy_rx_err;
-	assign mcu_rx      = uo_out[5:4];
-	assign mcu_rx_cmd  = uo_out[7:6];
+
+	assign phy_tx      = uo_out[1:0];
+	assign phy_tx_v    = uo_out[2];
 
 	assign ui_in[0] = tck;
 	assign ui_in[1] = tms;

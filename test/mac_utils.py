@@ -92,12 +92,44 @@ async def phy_stream_frame(dut, raw):
 		dut.phy_rx_err.value = "X"
 		dut.phy_rx.value = "X"*2
 		await ClockCycles(dut.clk,1)
+
+# convert from byte array where data is stored in the 2 lower bits 
+# to a real byte array 
+def bitpair_to_bytes(buff):
+	frame = array('B')
+	tmp = 0
+	i = 0
+	for b in buff: 
+		inv =(b & 0x2) >> 1 
+		inv |= (b & 0x1) << 1
+		tmp |= inv << 2*(3-(i%4))
+		cocotb.log.info(f"i {i%4} tmp {hex(tmp)} b {hex(b)} inv {hex(inv)}") 
+		i = i+1
+		if ( i % 4 == 0): 
+			frame.append(tmp)
+			tmp = 0 
+
+	cocotb.log.info(f"tx frame {frame.tobytes().hex()} ({len(frame)})") 
+	cocotb.log.info(f"i {i}") 
+	assert(i % 4 == 0)
+	return frame
+
+async def read_tx_frame(dut):
+	buff = array('B') 
+	while( dut.phy_tx_v.value != 1):
+		await ClockCycles(dut.clk, 1)
+	while (dut.phy_tx_v.value == 1):
+		buff.append(dut.phy_tx.value)
+		await ClockCycles(dut.clk, 1)
+	return bitpair_to_bytes(buff)
 	
 async def send_simple_frame(dut):
 	random.seed(0)
 	# group dst address
 	frame = eth_frame(DEVICE_MAC, b"\xFF\xFF\x00\xFF\x00\xFF")
 	frame.random_body(ethtype = APP_ETHTYPE)
+	read_tx_thread = cocotb.start_soon(read_tx_frame(dut))
 	await phy_stream_frame(dut,frame.raw())
+	tx_frame = await read_tx_thread
 
 		
