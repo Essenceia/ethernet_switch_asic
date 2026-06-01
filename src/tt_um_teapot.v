@@ -179,7 +179,7 @@ mac_conf #(
 	.clk(clk),
 	.rst_n(rst_n),
 
-	.default_tx_phase_i(ui_in[7]),
+	.default_tx_phase_i(default_tx_phase),
 	
 	.data_v_i    (data_rx_v),
 	.data_conf_i (data_rx_conf),

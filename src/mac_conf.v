@@ -73,7 +73,7 @@ always @(posedge clk) begin
 		fsm_q <= IDLE; 
 	else begin
 		case(fsm_q)
-			IDLE: fsm_q <= data_start_i & ~data_err_i & data_conf_i ? CONF: IDLE; 
+			IDLE: fsm_q <= data_v_i & data_start_i & ~data_err_i & data_conf_i ? CONF: IDLE; 
 			CONF: fsm_q <=  cnt_q == PKT_DATA_CNT? IDLE: CONF;
 		endcase
 	end
