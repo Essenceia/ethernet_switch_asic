@@ -35,13 +35,13 @@ module mac_tx #(
 	output wire [PHY_W-1:0] phy_o	
 );
 localparam CNT_W = 6; 
-localparam [CNT_W-1:0] PREAMBLE_CNT = 7 * (8/PHY) - 1; 
-localparam [CNT_W-1:0] SFD_CNT      = 1 * (8/PHY) - 1; 
-localparam [CNT_W-1:0] MAC_CNT      = 6 * (8/PHY) - 1; 
-localparam [CNT_W-1:0] ETHTYPE_CNT  = 2 * (8/PHY) - 1; 
-localparam [CNT_W-1:0] FCS_CNT      = 4 * (8/PHY) - 1; 
+localparam [CNT_W-1:0] PREAMBLE_CNT = 7 * (8/PHY_W) - 1; 
+localparam [CNT_W-1:0] SFD_CNT      = 1 * (8/PHY_W) - 1; 
+localparam [CNT_W-1:0] MAC_CNT      = 6 * (8/PHY_W) - 1; 
+localparam [CNT_W-1:0] ETHTYPE_CNT  = 2 * (8/PHY_W) - 1; 
+localparam [CNT_W-1:0] FCS_CNT      = 4 * (8/PHY_W) - 1; 
 
-localparam [CNT_W-1:0] SFD_CNT_MIN_1 = 1 * (8/PHY) - 2; 
+localparam [CNT_W-1:0] SFD_CNT_MIN_1 = 1 * (8/PHY_W) - 2; 
 
 localparam FCS_W = 32;
 /* 
@@ -108,7 +108,7 @@ always @(posedge clk) begin
 		4'bXXX1: shift_buff_q <= phy_mac_i;
 		4'bXX1X: shift_buff_q <= data_dst_mac_i;
 		4'bX1XX: shift_buff_q <= {APP_ETHTYPE, {BUFF_W-ETHTYPE_W{1'bX}}};
-		4'b1XXX: shift_buff_q <= {fcs, {BUFF_W-FCS_W{1'bX}}};
+		4'b1XXX: shift_buff_q <= {pkt_fcs, {BUFF_W-FCS_W{1'bX}}};
 		default: shift_buff_q <= {shift_buff_q[BUFF_W-PHY_W-1-:PHY_W], {BUFF_W-PHY_W{1'bX}}}; 
 	endcase
 end
