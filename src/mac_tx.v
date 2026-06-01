@@ -128,7 +128,7 @@ wire [PHY_W-1:0] preamble_data;
 wire sel_sfd_last;
 wire sel_preamble_sfd;
 
-assign sel_sfd_last     = (fsm_q == SFD) & (cnt_q == SFD_CNT_MIN_1);
+assign sel_sfd_last     = (fsm_q == SFD) & (cnt_q == SFD_CNT);
 assign sel_preamble_sfd = (fsm_q == PREAMBLE) | (fsm_q == SFD);
 assign preamble_data = sel_sfd_last? 2'b11 : 2'b01; 
 

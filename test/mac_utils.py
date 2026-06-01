@@ -100,7 +100,8 @@ def bitpair_to_bytes(buff):
 	tmp = 0
 	i = 0
 	for b in buff: 
-		tmp |= b << 2*(3-(i%4))
+		tmp |= b << 2*(i%4)
+		cocotb.log.info(f"tmp {hex(tmp)} b{hex(b)}") 
 		i = i+1
 		if ( i % 4 == 0): 
 			cocotb.log.info(f"i {int((i-1)/4)} tmp {hex(tmp)}") 
