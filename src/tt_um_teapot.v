@@ -37,6 +37,9 @@ wire        data_rx_err;
 wire [PHY_W-1:0]  data_rx;
 wire [MAC_W-1:0] data_rx_src_mac; 
 
+wire        rmii_tx_v; 
+wire [PHY_W-1:0] rmii_tx;
+
 wire        mac_tx_v;
 wire        mac_tx_last;
 wire        mac_tx_acc;
@@ -121,8 +124,8 @@ rmii m_rmii(
 	.mac_rx_o(mac_rx),
 	.mac_rx_err_o(mac_rx_err),
 
-	.mac_tx_v_i(mac_tx_v),
-	.mac_tx_i(mac_tx)
+	.mac_tx_v_i(rmii_tx_v),
+	.mac_tx_i(rmii_tx)
 );
 
 // rx mac 
@@ -190,7 +193,23 @@ mac_conf #(
 );
 
 // tx mac
-// TODO 
-assign mac_tx_acc = 1'b1;
+mac_tx #(
+	.PHY_W(PHY_W),
+	.APP_ETHTYPE(APP_ETHTYPE)
+) m_mac_tx(
+	.clk(clk),
+	.rst_n(rst_n),
+	
+	.phy_mac_i(mac_addr),// conf
+	
+	.data_v_i(mac_tx_v),
+	.data_last_i(mac_tx_last),
+	.data_i(mac_tx),
+	.data_dst_mac_i(mac_tx_dst_mac),
+	.data_acc_o(mac_tx_acc),
+
+	.phy_v_o(rmii_tx_v),
+	.phy_o(rmii_tx)
+);
 
 endmodule
