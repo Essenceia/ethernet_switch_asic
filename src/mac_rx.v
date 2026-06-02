@@ -45,7 +45,7 @@ localparam [ADDR_CNT_W-1:0] ADDR_CNT = ADDR_CNT_VAL;
 /* verilator lint_on WIDTHTRUNC */
 
 localparam SFD_W = 8; 
-localparam [SFD_W-1:0] SFD = 8'b10101011; 
+localparam [SFD_W-1:0] SFD = 8'b11010101; 
 
 localparam FRAME_TYPE_W       = 16;
 localparam FRAME_TYPE_CNT_VAL = (FRAME_TYPE_W/PHY_W) - 1;
@@ -83,8 +83,9 @@ reg  pkt_conf_q;
 
 localparam BUF_W = MAC_W; // max(MAC_W,SFD_W,FCS_W)
 
-reg  [BUF_W-3:0] buff_q;
+reg  [BUF_W-1:PHY_W] buff_q;
 wire [BUF_W-1:0] buff;
+wire [BUF_W-1:0] swap_buff;
 wire frame_start;
 
 localparam CNT_W = ADDR_CNT_W; // $max(ADDR_CNT_W, FRAME_TYPE_CNT);
@@ -128,16 +129,18 @@ end
 assign eof = (fsm_q == BODY) & ~ rx_v_i;
 
 // stream from PHY is expected to be gappless
-assign buff = {buff_q[BUF_W-PHY_W-1:0], rx_i};
+assign buff = {rx_i, buff_q[BUF_W-1:PHY_W]};
+
+byteswap #(.W(BUF_W/8)) m_swap_buf(.i(buff), .o(swap_buff));
 
 always @(posedge clk) 
 	if (~rst_n) 
 		buff_q <= {BUF_W-2{1'b0}};
 	else
-		buff_q <= buff[BUF_W-3:0];
+		buff_q <= buff[BUF_W-1:PHY_W];
  
 // detect SFD
-assign frame_start = buff[SFD_W-1:0] == SFD; 
+assign frame_start = swap_buff[SFD_W-1:0] == SFD; 
 
 // filter out packets that don't match our MAC address (or multicast)
 always @(posedge clk)
@@ -148,16 +151,16 @@ always @(posedge clk)
 	else
 		cnt_q <= cnt_q + {{CNT_W-1{1'b0}}, 1'b1};
 
-assign dst_addr_match = phy_mac_i == buff;
-assign type_vlan = buff[FRAME_TYPE_W-1:0] == TYPE_VLAN; 
-assign vid_match = buff[VID_W-1:0] == vid_i;
+assign dst_addr_match = phy_mac_i == swap_buff;
+assign type_vlan = swap_buff[FRAME_TYPE_W-1:0] == TYPE_VLAN; 
+assign vid_match = swap_buff[VID_W-1:0] == vid_i;
 
 assign is_type = (cnt_q[FRAME_TYPE_CNT_W-1:0] == FRAME_TYPE_CNT) & (((fsm_q == PKT_TYPE) & ~type_vlan) 
 				 | (fsm_q == VLAN)); 
 
 // ethertype filtering
-assign pkt_conf = buff[FRAME_TYPE_W-1:0] == CONF_ETHTYPE;
-assign pkt_app = buff[FRAME_TYPE_W-1:0] == APP_ETHTYPE;
+assign pkt_conf = swap_buff[FRAME_TYPE_W-1:0] == CONF_ETHTYPE;
+assign pkt_app = swap_buff[FRAME_TYPE_W-1:0] == APP_ETHTYPE;
 
 assign ethtype_match = (pkt_app | pkt_conf);
 
@@ -179,7 +182,7 @@ always @(posedge clk)
 // src mac capture 
 always @(posedge clk) 
 	if ((fsm_q == SRC_MAC) & (cnt_q[ADDR_CNT_W-1:0] == ADDR_CNT))
-		src_mac_q <= buff[MAC_W-1:0];
+		src_mac_q <= swap_buff[MAC_W-1:0];
  
 // sticky error 
 always @(posedge clk) 

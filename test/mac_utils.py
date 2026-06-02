@@ -28,7 +28,8 @@ class MAC_header(NamedTuple):
 
 	def raw(self):
 		r = bytearray()
-		r+= self.dst
+		# big endian 
+		r+= self.dst 
 		r+= self.src
 		if self.vlan_tag is not None:
 			r += self.vlan_tag.tpid
@@ -38,7 +39,7 @@ class MAC_header(NamedTuple):
 
 @dataclass
 class eth_frame:
-	sfd: bytes = b'\xab'
+	sfd: bytes = b'\xd5'
 	header: MAC_header = MAC_header()
 	body: bytes = bytes(48)
 	fcs: bytes = b'\xff\xff\xff\xff'
@@ -65,9 +66,11 @@ class eth_frame:
 		r = bytearray()
 		r += self.header.raw()
 		r += self.body
-		r += crc_utils.calc_fcs(r)
+		r += crc_utils.calc_fcs(r)[::-1]
 		r = self.sfd + r
 		return r
+
+# lsbit first MSByte first
 
 async def phy_stream_frame(dut, raw):
 	cocotb.log.info(f"raw frame {raw.hex()}")
@@ -81,10 +84,10 @@ async def phy_stream_frame(dut, raw):
 		cocotb.log.debug(f"x {hex(x)}") 
 		for _ in range(0,4):
 			dut.phy_rx_v.value = 1
-			dut.phy_rx.value = (x & 0xc0) >> 6
+			dut.phy_rx.value = x & 0x3
 			await ClockCycles(dut.clk,1)
 			cocotb.log.debug(f"{dut.phy_rx.value}")
-			x = x << 2
+			x = x >> 2
 	# IPG
 	ipg = random.randint(1,10)
 	for _ in range(0, ipg):
