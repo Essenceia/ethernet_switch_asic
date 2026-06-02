@@ -62,14 +62,15 @@ localparam FCS_W = 32;
 localparam DELAY_DEPTH = (FCS_W /PHY_W) + 1;
 
 // fsm 
-localparam ERR        = 4'd0; 
-localparam IDLE       = 4'd1; 
-localparam DETECT_SFD = 4'd2;
-localparam DST_MAC    = 4'd3;
-localparam SRC_MAC    = 4'd4;
-localparam PKT_TYPE   = 4'd5;
-localparam VLAN       = 4'd6;
-localparam BODY       = 4'd7; 
+localparam IDLE       = 4'd0; 
+localparam DETECT_SFD = 4'd1;
+localparam DST_MAC    = 4'd2;
+localparam SRC_MAC    = 4'd3;
+localparam PKT_TYPE   = 4'd4;
+localparam VLAN       = 4'd5;
+localparam BODY       = 4'd6; 
+
+localparam ERR        = 4'd7; 
  
 reg [3:0] fsm_q;
 
@@ -192,12 +193,12 @@ always @(posedge clk)
 		err_q <=  err_q | (rx_v_i & rx_err_i) | fcs_err; 
 
 // FCS 
-crc m_fcs(
+crc_8 m_fcs(
 	.clk(clk),
-	.rst_crc(fsm_q == IDLE),
-	.data_in(rx_i),
-	.crc_en(fsm_q != DETECT_SFD),
-	.crc_out(pkt_fcs)
+	.crc_rst_i(fsm_q == IDLE),
+	.data_i(buff[BUF_W-1-:8]),
+	.crc_en_i((fsm_q != DETECT_SFD) & (cnt_q[1:0] == 2'b11)),
+	.crc_o(pkt_fcs)
 );
 assign fcs_err = eof & |(pkt_fcs);// end of packet, check fcs
 

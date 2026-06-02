@@ -44,11 +44,11 @@ class eth_frame:
 	body: bytes = bytes(48)
 	fcs: bytes = b'\xff\xff\xff\xff'
 	
-	def random_body(self, ethtype=b'\x88\xB5'):
-		l = random.randint(48,60)
+	def random_body(self, ethtype : bytes(2) =b'\x88\xB5', l:int= 46):
 		body = bytearray(0)
 		for i in range(0,l):
-			body.append(random.randint(0,255))
+			#body.append(random.randint(0,255))
+			body.append(0)
 		self.set_payload(body, ethtype)
 		
 
@@ -66,7 +66,7 @@ class eth_frame:
 		r = bytearray()
 		r += self.header.raw()
 		r += self.body
-		r += crc_utils.calc_fcs(r)[::-1]
+		r += crc_utils.calc_fcs(r)
 		r = self.sfd + r
 		return r
 
