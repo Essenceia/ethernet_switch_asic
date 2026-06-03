@@ -62,6 +62,10 @@ async def rst(dut, ena=1, start_jtag=False, start_main_clk=True):
 	if not(start_main_clk): 
 		assert(clk_task.cancel())
 
+# send only, used to test config frames where no response is expected
+async def send_frame(dut, rx: eth_frame):
+	await mac_utils.phy_stream_frame(dut, rx.raw())
+
 async def send_and_check_frames(dut,rx : eth_frame):
 	tx_sent, tx = mac_utils.expected_response(rx)
 	if tx_sent: 
@@ -102,4 +106,5 @@ async def filter_rx_test(dut):
 
 @cocotb.test()
 async def update_eth_config(dut):
-	pass
+	await rst(dut)
+	await send_frame(dut, mac_utils.simple_config())

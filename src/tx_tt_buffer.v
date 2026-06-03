@@ -32,7 +32,10 @@ wire      inner_clk;
 reg       tx_v_q; 
 reg [1:0] tx_q;
 reg       clk_phase_sel_q;
+
+(* DONT_TOUCH = "yes" *)
 wire       tx_v_buff;
+(* DONT_TOUCH = "yes" *)
 wire [1:0] tx_buff;
 
 always @(posedge ref_clk) 
@@ -42,8 +45,8 @@ assign inner_clk = clk_phase_sel_q ? ~ref_clk : ref_clk;
 
 // shooting design opt a bit until it stops being too good at creating
 // hold violations
-assign tx_v_buff = ~(~tx_v_i); (* dont_touch *)
-assign tx_buff   = ~(~tx_i); (* dont_touch *)
+assign tx_v_buff = ~(~tx_v_i);
+assign tx_buff   = ~(~tx_i); 
 
 always @(posedge inner_clk) begin
 	tx_v_q <= tx_v_buff; 

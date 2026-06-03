@@ -13,8 +13,10 @@ from typing import NamedTuple, Optional
 
 import crc_utils 
 import app_utils
+import conf_utils
 
 APP_ETHTYPE = b"\x88\xB5"
+CONF_ETHTYPE = b"\x88\xB6"
 DEFAULT_DEVICE_MAC = b"\x00\x90\xCF\x00\xBE\xEF"
 DEFAULT_VID = b"\x0D\xAD"
 VID_MASK = b"\x0F\xFF"
@@ -167,4 +169,9 @@ def test_filtered_packets() -> eth_frame:
 	frame = eth_frame(dst = dst_mac, src = src_mac)
 	frame.random_body(ethtype = ethtype)
 	return frame
-	
+
+def simple_config(dst_mac : bytes(6) = DEFAULT_DEVICE_MAC) -> eth_frame:
+	frame = eth_frame(dst=dst_mac, src=b"\x00\xF0\x00\xFF\x00\xFF")
+	conf_pkt = conf_utils.config_payload()
+	frame.set_payload(payload = conf_pkt.raw(), ethtype = CONF_ETHTYPE)
+	return frame
