@@ -103,7 +103,7 @@ always @(posedge clk)
 byteswap #(.W(BUF_W/8)) m_buff_swap(.i(buff_q), .o(swap_buff));
 
 assign mac_addr_o      = swap_buff[BUF_W-1-:MAC_W];
-assign vid_o           = swap_buff[BUF_W-MAC_W+4-1-:VID_W];
+assign vid_o           = swap_buff[BUF_W-MAC_W-(VID_PAD_W-VID_W)-1-:VID_W];
 assign clk_phase_sel_o = swap_buff[0];
 
 endmodule
