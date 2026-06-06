@@ -212,4 +212,6 @@ mac_tx #(
 	.phy_o(rmii_tx)
 );
 
+// jtag - TODO
+assign tdo = 1'b0;
 endmodule
