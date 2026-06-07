@@ -130,7 +130,8 @@ localparam FRAME_CNT_VAL   = (ETH_FRAME_MIN_W/PHY_W)-1;
 localparam FRAME_CNT_W     = $clog2(FRAME_CNT_VAL);
 localparam RES_W           = 16;
 /* verilator lint_off WIDTHTRUNC */
-localparam [FRAME_CNT_W-1:0]   FRAME_CNT   = FRAME_CNT_VAL;
+localparam [FRAME_CNT_W-1:0]   FRAME_CNT       = FRAME_CNT_VAL;
+localparam [FRAME_CNT_W-1:0]   FRAME_CNT_MIN_1 = FRAME_CNT_VAL - 1;
 /* verilator lint_on WIDTHTRUNC */
 
 // tx fsm 
@@ -143,6 +144,8 @@ reg  [1:0] tx_fsm_q;
 reg  [FRAME_CNT_W-1:0] tx_cnt_q;
 wire [RES_W-1:0] swap_mul_res;
 reg  [RES_W-1:0] res_q;
+reg              mac_tx_v_q;
+reg              mac_tx_last_q; 
  
 always @(posedge clk) begin
 	if (~rst_n) 
@@ -157,6 +160,12 @@ always @(posedge clk) begin
 	end
 end
 
+// floppe early versions for timing, signals are on the critical path
+always @(posedge clk) begin
+	mac_tx_v_q <= (tx_fsm_q == TX_CAPTURE) | (tx_fsm_q == TX_REQ) |  ((tx_fsm_q == TX_STREAM) & (tx_cnt_q != FRAME_CNT));
+	mac_tx_last_q <= (tx_fsm_q == TX_STREAM) & (tx_cnt_q == FRAME_CNT_MIN_1);
+end
+
 always @(posedge clk) 
 	if (tx_fsm_q == TX_REQ) tx_cnt_q <= {FRAME_CNT_W{1'b0}};
 	else if (mac_tx_acc_i) tx_cnt_q <= tx_cnt_q + {{FRAME_CNT_W-1{1'b0}}, 1'b1};
@@ -167,9 +176,9 @@ always @(posedge clk)
 	if (tx_fsm_q == TX_CAPTURE) res_q <= swap_mul_res;
 	else if (tx_fsm_q == TX_STREAM) res_q <= {{PHY_W{1'b0}}, res_q[RES_W-1:PHY_W]}; // padd with 0s
 
-assign mac_tx_v_o = (tx_fsm_q == TX_REQ) | (tx_fsm_q == TX_STREAM);
-assign mac_tx_last_o = (tx_fsm_q == TX_STREAM) & (tx_cnt_q == FRAME_CNT);
-assign mac_tx_o = res_q[PHY_W-1:0];
+assign mac_tx_v_o       = mac_tx_v_q;
+assign mac_tx_last_o    = mac_tx_last_q;
+assign mac_tx_o         = res_q[PHY_W-1:0];
 assign mac_tx_dst_mac_o = data_src_mac_i;
 
 endmodule

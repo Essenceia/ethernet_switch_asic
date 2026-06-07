@@ -41,7 +41,8 @@ localparam [CNT_W-1:0] MAC_CNT      = 6 * (8/PHY_W) - 1;
 localparam [CNT_W-1:0] ETHTYPE_CNT  = 2 * (8/PHY_W) - 1; 
 localparam [CNT_W-1:0] FCS_CNT      = 4 * (8/PHY_W) - 1; 
 
-localparam [CNT_W-1:0] SFD_CNT_MIN_1 = 1 * (8/PHY_W) - 2; 
+localparam [CNT_W-1:0] SFD_CNT_MIN_1      = 1 * (8/PHY_W) - 2; 
+localparam [CNT_W-1:0] ETHTYPE_CNT_MIN_1  = 2 * (8/PHY_W) - 2; 
 
 localparam FCS_W = 32;
 /* 
@@ -88,8 +89,13 @@ assign rst_cnt = (fsm_q == IDLE)
 
 always @(posedge clk) 
 	cnt_q <= rst_cnt ? {CNT_W{1'b0}}: cnt_q + {{CNT_W-1{1'b0}}, 1'b1}; 
+
+reg    data_acc_q;
+always @(posedge clk) 
+	data_acc_q <= ((fsm_q == ETHTYPE) & (cnt_q == ETHTYPE_CNT_MIN_1)) 
+                | ((fsm_q == PAYLOAD) & ~data_last_i); 
 	
-assign data_acc_o = (fsm_q == PAYLOAD) | ((fsm_q == ETHTYPE) & (cnt_q == ETHTYPE_CNT));
+assign data_acc_o = data_acc_q;
 
 // fcs 
 wire [FCS_W-1:0] fcs_early;
