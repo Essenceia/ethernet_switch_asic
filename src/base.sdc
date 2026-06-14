@@ -30,16 +30,16 @@ set mux_clk_cell [get_cells -hierarchical -regexp ".*m_ref_clk_mux"]
 set mux_clk_pin [get_first_output_pin $mux_clk_cell]
 
 #can't use the combinational arg as it causes the drt to seg fault
-set ::env(OUTPUT_CLOCK) "dephase_clk"
-create_generated_clock -name $::env(OUTPUT_CLOCK) -source [get_ports $clock_port] -divide_by 1 -invert $mux_clk_pin
-
-set_min_delay 9 -from [get_port $::env(CLOCK_PORT)] -to [get_all_dff_clk_port $::env(OUTPUT_CLOCK)]
-set_max_delay 11 -from [get_port $::env(CLOCK_PORT)] -to [get_all_dff_clk_port $::env(OUTPUT_CLOCK)]
+set ::env(OUTPUT_CLOCK_0) "dephase_clk_0"
+set ::env(OUTPUT_CLOCK_1) "dephase_clk_0"
+create_generated_clock -name $::env(OUTPUT_CLOCK_0) -source [get_ports $::env(CLOCK_PORT)] -master_clock [get_clocks $::env(CLOCK_PORT)] -divide_by 1 -invert $mux_clk_pin -add
+create_generated_clock -name $::env(OUTPUT_CLOCK_1) -source [get_ports $::env(CLOCK_PORT)] -master_clock [get_clocks $::env(CLOCK_PORT)] -divide_by 1 $mux_clk_pin -add
+set_clock_groups -logically_exclusive -group $::env(OUTPUT_CLOCK_0) -group $::env(OUTPUT_CLOCK_1)
 
 set_propagated_clock [all_clocks]
 
 
-set ::env(PHY_RX_PINS) {uio_in[0] uio_in[1] uio_in[2] uio_in[3]}
+set ::env(PHY_RX_PINS) {ui_in[0] ui_in[1] ui_in[2] ui_in[3]}
 set ::env(PHY_TX_PINS) {uo_out[0] uo_out[1] uo_out[2]}
 
 read_sdc $::env(DESIGN_DIR)/lan8720a.sdc

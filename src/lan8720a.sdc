@@ -14,7 +14,6 @@ set_input_delay -clock ${ref_clk} -max ${toval} $::env(PHY_RX_PINS)
 set_input_delay -clock ${ref_clk} -min ${tohold} $::env(PHY_RX_PINS) 
 
 # input direction (output from the ASIC) TXD[1:0] TXEN (TXV)  
-set tx_pins {uo_out[0] uo_out[1] uo_out[2]}
 # setup time to rising edge for the refclk
 set tsu 4
 # input hold time after rising edge of refclk
