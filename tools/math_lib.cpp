@@ -1,5 +1,6 @@
 #include "math_lib.hpp"
 
+#include <cmath> 
 #include <iostream> 
 #include <cfenv>
 #include <iomanip>
@@ -13,7 +14,9 @@
 #define IS_SUBNORMAL(x) (!(isnormal(x) | isnan(x) | isinf(x) | (x == 0e0bf16)))
 #define BF16_DEFAULT_VAL 0e0bf16
 
-union {
+using namespace std; 
+
+typedef union {
 	uint16_t u;
 	bfloat16_t f;
 } u16_u;
@@ -23,6 +26,18 @@ void init_bf16(){
 	fesetround(FE_TOWARDZERO);
 }
 
+bfloat16_t _subnormal_to_zero(bfloat16_t x){
+	if IS_SUBNORMAL(x) {
+		bool pos = !signbit(x);
+#ifdef DEBUG
+		cout << "rounding subnormal to "<< (pos?"+":"-") <<"0.0 from " << scientific << x << " [normal:"<<
+		isnormal(x) << ", nan:"<< isnan(x) << ", inf:"<< isinf(x) << "]" << endl;
+#endif
+		if (pos) x = 0e0bf16;
+		else x = -0e0bf16; // because -0 is a thing I want to handle
+	}
+	return x;
+};
 
 bfloat16_t expected_hw_result(bfloat16_t x){
 	if IS_SUBNORMAL(x) {
@@ -66,9 +81,9 @@ void print_bf16(uint16_t a){
 // nan
 // subnormals
 uint16_t bf16_remap_input(uint16_t x){
-	u16_u ux.u = x; 
+	u16_u ux = {.u = x}; 
 	ux.f = _subnormal_to_zero(ux.f);
-	if (isnan(f) || isinf(f)) f = BF16_DEFAULT_VAL;
+	if (isnan(ux.f) || isinf(ux.f)) ux.f = BF16_DEFAULT_VAL;
 	return ux.u; 
 }
 
