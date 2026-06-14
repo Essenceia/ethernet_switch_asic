@@ -8,7 +8,7 @@ OBJ:=$(SRC_C:.c=.c.o) $(SRC_CPP:.cpp=.cpp.o)
 
 $(info obj $(OBJ))
 
-.PHONY: build clean trace run $(BIN_NAME)
+.PHONY: build clean trace run
 
 # implicit rules 
 # all c objects 

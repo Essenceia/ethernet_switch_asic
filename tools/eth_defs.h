@@ -17,4 +17,7 @@ typedef uint8_t mac_addr_t[MAC_W];
 
 #define DEFAULT_ASIC_MAC {0x00, 0x90, 0xCF, 0x00, 0xBE, 0xEF}
 
+// max ethernet frame length assuming no jumbo frame
+#define ETH_FRAME_MAX_W 1514
+
 #endif // ETH_DEFS_H

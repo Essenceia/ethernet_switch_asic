@@ -1,4 +1,3 @@
-#include "math_lib.hpp"
 
 #include <cmath> 
 #include <iostream> 
@@ -13,6 +12,10 @@
 
 #define IS_SUBNORMAL(x) (!(isnormal(x) | isnan(x) | isinf(x) | (x == 0e0bf16)))
 #define BF16_DEFAULT_VAL 0e0bf16
+
+extern "C" {
+
+#include "math_lib.hpp"
 
 using namespace std; 
 
@@ -73,7 +76,18 @@ uint16_t mul_bf16(uint16_t a, uint16_t b){
 void print_bf16(uint16_t a){
 	u16_u ua; 
 	ua.u = a; 
-	cout << scientific << ua.f; 
+	cout << scientific << ua.f << " 0x" << hex << ua.u; 
+}
+
+void print_mul_bf16(uint16_t a, uint16_t b){
+	u16_u ua, ub, uc; 
+	ua.u = a; 
+	ub.u = b; 
+	uc.u = mul_bf16(ua.u, ub.u);
+	cout << "a*b=c" << endl;
+	cout << "a: "<< scientific << ua.f << " 0x" << hex << ua.u << endl;
+	cout << "b: "<< scientific << ub.f << " 0x" << hex << ub.u << endl;
+	cout << "c: "<< scientific << uc.f << " 0x" << hex << uc.u << endl;
 }
 
 // format expected input, remove : 
@@ -87,4 +101,4 @@ uint16_t bf16_remap_input(uint16_t x){
 	return ux.u; 
 }
 
-
+}

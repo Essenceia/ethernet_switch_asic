@@ -35,8 +35,11 @@ static_assert(CONF_PACKET_LENGTH == _MIN_ETH_FRAME_LENGTH);
 
 void set_header(eth_header_t* header, mac_addr_t dst, mac_addr_t src, uint16_t ethtype);
 
-uint8_t* create_app_packet(mac_addr_t dst_mac, mac_addr_t src_mac, uint16_t a, uint16_t b);
+app_packet_t* create_app_packet(mac_addr_t dst_mac, mac_addr_t src_mac, uint16_t a, uint16_t b);
 
-void print_packet(uint8_t *pkt, size_t pkt_lenght);
+void print_raw_packet(uint8_t *pkt, size_t pkt_lenght);
+void print_app_packet(app_packet_t *pkt, bool is_req);
+void print_header(eth_header_t h);
+
 
 #endif // PACKETS_H
