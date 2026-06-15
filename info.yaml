@@ -1,17 +1,17 @@
 # Tiny Tapeout project information
 project:
-  title:        "Teapot server"      # Project title
+  title:        "100Mpbs 3 port Ethernet switch"      # Project title
   author:       "Julia Desmazes"      # Your name
   discord:      "essen__"      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
-  description:  "Network connected accelerator concept."      # One line description of what your project does
+  description:  "Unmanaged cut-though 3 port 100Mbps ethernet switch"      # One line description of what your project does
   language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
   clock_hz:     50000000       # Clock frequency in Hz (or 0 if not applicable)
 
   # How many tiles your design occupies? A single tile is about 340x160 uM.
-  tiles: "1x2"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 3x4 or 4x4
+  tiles: "2x2"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 3x4 or 4x4
 
   # Your top module name must start with "tt_um_". Make it unique by including your github username:
-  top_module:  "tt_um_teapot"
+  top_module:  "tt_um_coffeepot"
 
   # List your project's source files here.
   # Source files must be in ./src and you must list each source file separately, one per line.
@@ -34,34 +34,34 @@ project:
 # This section is for the datasheet/website. Use descriptive names (e.g., RX, TX, MOSI, SCL, SEG_A, etc.).
 pinout:
   # Inputs
-  ui[0]: "phy_rx_data[0]"
-  ui[1]: "phy_rx_data[1]"
-  ui[2]: "phy_rx_v"
-  ui[3]: "phy_rx_err"
-  ui[4]: ""
-  ui[5]: ""
-  ui[6]: ""
-  ui[7]: "tx_phase"
+  ui[0]: "phy0_rx_data[0]"
+  ui[1]: "phy0_rx_data[1]"
+  ui[2]: "phy0_rx_v"
+  ui[3]: "phy0_rx_err"
+  ui[4]: "phy1_rx_data[0]"
+  ui[5]: "phy1_rx_data[1]"
+  ui[6]: "phy1_rx_v"      
+  ui[7]: "phy1_rx_err"    
 
   # Outputs
-  uo[0]: "phy_tx_data[0]"
-  uo[1]: "phy_tx_data[1]"
-  uo[2]: "phy_tx_v"
+  uo[0]: "phy0_tx_data[0]"
+  uo[1]: "phy0_tx_data[1]"
+  uo[2]: "phy0_tx_v"
   uo[3]: ""
   uo[4]: ""
-  uo[5]: ""
-  uo[6]: ""
-  uo[7]: ""
+  uo[5]: "phy1_tx_data[0]"
+  uo[6]: "phy1_tx_data[1]"
+  uo[7]: "phy1_tx_v"      
 
   # Bidirectional pins
-  uio[0]: ""
-  uio[1]: ""
-  uio[2]: ""
-  uio[3]: ""
+  uio[0]: "phy2_rx_data[0]"
+  uio[1]: "phy2_rx_data[0]"
+  uio[2]: "phy2_rx_v"
+  uio[3]: "phy2_rx_err"
   uio[4]: ""
-  uio[5]: ""
-  uio[6]: ""
-  uio[7]: ""
+  uio[5]: "phy2_tx_data[0]"
+  uio[6]: "phy2_tx_data[1]"
+  uio[7]: "phy2_tx_v"
 
 # Do not change!
 yaml_version: 6
