@@ -31,7 +31,7 @@ set mux_clk_pin [get_first_output_pin $mux_clk_cell]
 
 #can't use the combinational arg as it causes the drt to seg fault
 set ::env(OUTPUT_CLOCK_0) "dephase_clk_0"
-set ::env(OUTPUT_CLOCK_1) "dephase_clk_0"
+set ::env(OUTPUT_CLOCK_1) "dephase_clk_1"
 create_generated_clock -name $::env(OUTPUT_CLOCK_0) -source [get_ports $::env(CLOCK_PORT)] -master_clock [get_clocks $::env(CLOCK_PORT)] -divide_by 1 -invert $mux_clk_pin -add
 create_generated_clock -name $::env(OUTPUT_CLOCK_1) -source [get_ports $::env(CLOCK_PORT)] -master_clock [get_clocks $::env(CLOCK_PORT)] -divide_by 1 $mux_clk_pin -add
 set_clock_groups -logically_exclusive -group $::env(OUTPUT_CLOCK_0) -group $::env(OUTPUT_CLOCK_1)

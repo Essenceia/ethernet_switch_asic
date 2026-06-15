@@ -19,9 +19,6 @@ project:
   source_files:
     - "tt_um_teapot.v"
     - "app_wrapper.v"
-    - "bf16/src/bf16_mul_fast.v"
-    - "bf16/src/booth_radix4_enc.v"
-    - "bf16/src/booth_unsigned_mul_pipelined.v"
     - "crc_8.v"
     - "mac_conf.v"
     - "mac_rx.v"
