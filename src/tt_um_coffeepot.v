@@ -35,11 +35,12 @@ assign mem_d    = ui_in;
 assign uo_out   = mem_q;
 gf180mcu_ocd_ip_sram__sram256x8m8wm1 m_sram(
 	.CLK(clk), 
-	.CEN(~en),
+	.CEN(~ena),
 	.GWEN(1'b0),
 	.WEN(1'b1),
 	.A(mem_addr),
 	.D(mem_d),
 	.Q(mem_q)
-)
+);
+
 endmodule

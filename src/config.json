@@ -37,7 +37,7 @@
   "SYNTH_AUTONAME": "True",
  
   "//": "3.3V 256x8x8 SRAM",
-  "MACROS" {
+  "MACROS": {
   	"gf180mcu_ocd_ip_sram__sram512x8m8wm1":{
 		"instances": {
 			"m_sram": {
