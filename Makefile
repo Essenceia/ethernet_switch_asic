@@ -11,7 +11,7 @@ $(info Using simulator: $(SIM))
 ###########
 
 # Global configs.
-PROJET_NAME := tt_um_teapot
+PROJET_NAME := tt_um_coffeepot
 FPGA_DIR := fpga
 SW_DIR := firmware
 TB_DIR := test

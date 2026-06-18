@@ -44,7 +44,7 @@ pinout:
 
   # Bidirectional pins
   uio[0]: "phy2_rx_data[0]"
-  uio[1]: "phy2_rx_data[0]"
+  uio[1]: "phy2_rx_data[1]"
   uio[2]: "phy2_rx_v"
   uio[3]: "phy2_rx_err"
   uio[4]: ""
