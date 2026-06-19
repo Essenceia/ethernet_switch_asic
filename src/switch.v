@@ -24,7 +24,7 @@ module switch #(
 
 	input  wire [PORT_CNT-1:0]       mac_tx_acc_i
 );
-localparam DATA_DELAY = 8 * 8; // preamble + sfd
+localparam DATA_DELAY = 8 * 8 + PHY_W; // preamble + sfd
 localparam BUF_W = DATA_DELAY;
 localparam BUF_V_W = DATA_DELAY / PHY_W; 
 
@@ -39,6 +39,10 @@ generate
 			buff_q[i]   <= {buff_q[i][BUF_W-PHY_W-1:0], mac_rx_i[(i+1)*PHY_W-1-:PHY_W]};
 			buff_v_q[i] <= {buff_v_q[i][BUF_V_W-2:0], mac_rx_v_i[i]};
 		end
+		wire [BUF_W-1:0] debug_buff;
+		wire [BUF_V_W-1:0] debug_buff_v;
+		assign debug_buff = buff_q[i];
+		assign debug_buff_v = buff_v_q[i];
 	end
 endgenerate
 

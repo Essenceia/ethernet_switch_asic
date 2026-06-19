@@ -158,9 +158,9 @@ def expected_response(req: eth_frame, device_mac : bytes(6) = DEFAULT_DEVICE_MAC
 	resp.set_payload(app_utils.layer3_app(req.body), APP_ETHTYPE)
 	return tx_sent, resp
 		
-def simple_frame() -> eth_frame:
+def simple_frame(dst_mac: bytes(6) = b"\x11\x22\x33\x44\x55\x66", src_mac: bytes(6) = b"\x77\x88\x99\xAA\xBB\xCC" ) -> eth_frame:
 	# group dst address
-	frame = eth_frame(dst=DEFAULT_DEVICE_MAC, src=b"\x00\xF0\x00\xFF\x00\xFF")
+	frame = eth_frame(dst=dst_mac, src=src_mac)
 	frame.set_payload(payload = app_utils.random_request_payload() , ethtype = APP_ETHTYPE)
 	return frame
 
@@ -177,7 +177,7 @@ def test_filtered_packets(dst_mac: bytes(6) = DEFAULT_DEVICE_MAC ) -> eth_frame:
 	return frame
 
 def simple_config(dst_mac : bytes(6) = DEFAULT_DEVICE_MAC, new_mac: bytes(6) = random.randbytes(6)) -> eth_frame:
-	frame = eth_frame(dst=dst_mac, src=b"\x00\xF0\x00\xFF\x00\xFF")
+	frame = eth_frame(dst=dst_mac, src=b"\x77\x88\x99\xAA\xBB\xCC")
 	conf_pkt = conf_utils.config_payload()
 	conf_pkt.addr = new_mac
 	frame.set_payload(payload = conf_pkt.raw(), ethtype = CONF_ETHTYPE)

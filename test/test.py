@@ -62,7 +62,8 @@ async def send_and_check_frames(dut, rx: {int, mac_utils.eth_frame}, tx: {int, m
 	for rx_thread in write_rx_thread: 
 		await rx_thread
 	# wait for tx 
-	for tx_thread in read_tx_thread:
+	for i in range(0, phy_utils.PORT_CNT):
+		tx_thread = read_tx_thread[i]
 		if tx[i] is not None:
 			# compare gotten and expected
 			tx_frame = await tx_thread
