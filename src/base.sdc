@@ -26,18 +26,18 @@ proc get_all_dff_clk_port { clk } {
 	return $ret
 }
 
-set ref_clk_tx0_mux_pin [get_first_output_pin [get_cells -hierarchical -regexp ".*g_channel0.*m_ref_clk_mux"]]
-set ref_clk_tx1_mux_pin [get_first_output_pin [get_cells -hierarchical -regexp ".*g_channel1.*m_ref_clk_mux"]]
-set ref_clk_tx2_mux_pin [get_first_output_pin [get_cells -hierarchical -regexp ".*g_channel2.*m_ref_clk_mux"]]
+set ref_clk_tx0_mux_pin [get_first_output_pin [get_cells -hierarchical -regexp ".*g_channel.0..m_rmii.*m_ref_clk_mux"]]
+set ref_clk_tx1_mux_pin [get_first_output_pin [get_cells -hierarchical -regexp ".*g_channel.1..m_rmii.*m_ref_clk_mux"]]
+set ref_clk_tx2_mux_pin [get_first_output_pin [get_cells -hierarchical -regexp ".*g_channel.2..m_rmii.*m_ref_clk_mux"]]
 
 set ::env(OUTPUT_CLOCK_TX0) "dephase_clk_0"
 set ::env(OUTPUT_CLOCK_TX1) "dephase_clk_1"
 set ::env(OUTPUT_CLOCK_TX2) "dephase_clk_2"
 
 # double generated clock from same source not supported by openraod cts 
-create_generated_clock -name $::env(OUTPUT_CLOCK_0) -source [get_ports $::env(CLOCK_PORT)] -master_clock [get_clocks $::env(CLOCK_PORT)] -combinational $ref_clk_tx0_mux_pin -add
-create_generated_clock -name $::env(OUTPUT_CLOCK_1) -source [get_ports $::env(CLOCK_PORT)] -master_clock [get_clocks $::env(CLOCK_PORT)] -combinational $ref_clk_tx1_mux_pin -add
-create_generated_clock -name $::env(OUTPUT_CLOCK_2) -source [get_ports $::env(CLOCK_PORT)] -master_clock [get_clocks $::env(CLOCK_PORT)] -combinational $ref_clk_tx2_mux_pin -add
+create_generated_clock -name $::env(OUTPUT_CLOCK_TX0) -source [get_ports $::env(CLOCK_PORT)] -master_clock [get_clocks $::env(CLOCK_PORT)] -combinational $ref_clk_tx0_mux_pin -add
+create_generated_clock -name $::env(OUTPUT_CLOCK_TX1) -source [get_ports $::env(CLOCK_PORT)] -master_clock [get_clocks $::env(CLOCK_PORT)] -combinational $ref_clk_tx1_mux_pin -add
+create_generated_clock -name $::env(OUTPUT_CLOCK_TX2) -source [get_ports $::env(CLOCK_PORT)] -master_clock [get_clocks $::env(CLOCK_PORT)] -combinational $ref_clk_tx2_mux_pin -add
 
 set_propagated_clock [all_clocks]
 
