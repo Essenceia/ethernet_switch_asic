@@ -135,7 +135,7 @@ async def read_tx_frame(dut, port_idx : int) -> bytes:
 			break
 		await ClockCycles(dut.clk, 1)
 
-	assert len(buff) == (64+8)*4, f"read frame TX{port_idx} got frame len {len(buff)}/{(64+8)*4}"
+	assert len(buff) == (64+8)*4, f"read frame TX{port_idx} got frame len {len(buff)}/{(64+8)*4}, frame {bitpair_to_bytes(buff).tobytes().hex()}"
 	cocotb.log.info(f"read frame TX{port_idx} finished")
 	return bitpair_to_bytes(buff)
 
