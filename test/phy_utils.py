@@ -4,6 +4,9 @@
 #granted to use it to train any model. 
 
 import cocotb
+
+from cocotb.types import LogicArray
+
 PORT_CNT = 3
 
 def set_rx(dut, idx: LogicArray, v: LogicArray, data: LogicArray, err:LogicArray = 0):
