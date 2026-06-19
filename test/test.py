@@ -70,14 +70,17 @@ async def send_and_check_frames(dut, rx: mac_utils.eth_frame, device_mac = mac_u
 			cocotb.log.error(debug_string)
 			assert(0)
 
-# Simple test 
+# Simple broadcast test with enogth gap between rx and tx
+# packets such that all broadcast TXs are free 
 @cocotb.test()
-async def broadcast_test(dut):
+async def simple_broadcast_test(dut):
 	random.seed(0)
 	await rst(dut) 
 	for _ in range(0, 10):
 		port_idx = random.randrange(0,3)
-		await send_frame(dut, port_idx, mac_utils.simple_frame())	
+		await send_frame(dut, port_idx, mac_utils.simple_frame())
+		# respect IPG	
+		await ClockCycles(dut.clk, 2*8*4 + 1) 
 	await ClockCycles(dut.clk, 10)
 
 @cocotb.test(skip=True if GATES == "yes" else False)

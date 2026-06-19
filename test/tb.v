@@ -73,8 +73,8 @@ module tb ();
 	assign phy_tx1     = uo_out[6:5];
 	assign phy_tx1_v   = uo_out[7];
 
-	assign phy_tx0     = uio_out[6:5];
-	assign phy_tx0_v   = uio_out[7];
+	assign phy_tx2     = uio_out[6:5];
+	assign phy_tx2_v   = uio_out[7];
 
 	tt_um_coffeepot m_dut (
 		  .ui_in  (ui_in),    // Dedicated inputs
