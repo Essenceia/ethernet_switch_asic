@@ -44,32 +44,40 @@ async def rst(dut, ena=1 ):
 	dut.ena.value = ena
 	await ClockCycles(dut.clk, 20)
 
-# send only, used to test config frames where no response is expected
+# send only, do not check for response
 async def send_frame(dut, port_idx:int, rx: mac_utils.eth_frame):
 	await mac_utils.phy_stream_frame(dut, port_idx, rx.raw())
-	port_idx 
 
-async def send_and_check_frames(dut, rx: mac_utils.eth_frame, device_mac = mac_utils.DEFAULT_DEVICE_MAC):
-	tx_sent, tx = mac_utils.expected_response(rx, device_mac)
-	if tx_sent: 
-		read_tx_thread = cocotb.start_soon(mac_utils.read_tx_frame(dut))
-	else:
-		read_tx_thread = cocotb.start_soon(mac_utils.check_no_tx_frame(dut))
-	await mac_utils.phy_stream_frame(dut,rx.raw())
-	tx_frame = await read_tx_thread
-	if tx_sent:
-		tx_raw = tx.raw(is_rmii_tx = True)
-		expected = tx_raw.hex()
-		gotten = tx_frame.tobytes().hex()
-		cocotb.log.info(f"tx {gotten}")
-		if (expected != gotten): 
-			cocotb.log.error(f"Error, missmatch between expected and gotten tx ethernet frame\nexp {expected}\ngot {gotten}")
-			debug_string = 4*" "
-			for (e, g) in zip(expected, gotten):
-				debug_string += "^" if (e != g) else " "
-			cocotb.log.error(debug_string)
-			assert(0)
-
+async def send_and_check_frames(dut, rx: {int, mac_utils.eth_frame}, tx: {int, mac_utils.eth_frame}):
+	write_rx_thread = []
+	read_tx_thread = []
+	for i in range(0, phy_utils.PORT_CNT):
+		if rx[i] is not None:
+			write_rx_thread.append(cocotb.start_soon(mac_utils.phy_stream_frame(dut, i, rx[i].raw())))
+		if tx[i] is not None:
+			read_tx_thread.append(cocotb.start_soon(mac_utils.read_tx_frame(dut, i)))
+		else:		
+			read_tx_thread.append(cocotb.start_soon(mac_utils.check_no_tx_frame(dut, i)))
+	# send rx
+	for rx_thread in write_rx_thread: 
+		await rx_thread
+	# wait for tx 
+	for tx_thread in read_tx_thread:
+		if tx[i] is not None:
+			# compare gotten and expected
+			tx_frame = await tx_thread
+			tx_raw = tx[i].raw(is_rmii_tx = True)
+			expected = tx_raw.hex()
+			gotten = tx_frame.tobytes().hex()
+			cocotb.log.info(f"TX{i} {gotten}")
+			if (expected != gotten): 
+				cocotb.log.error(f"Error, missmatch between expected and gotten TX{i} ethernet frame\nexp {expected}\ngot {gotten}")
+				debug_string = 4*" "
+				for (e, g) in zip(expected, gotten):
+					debug_string += "^" if (e != g) else " "
+				cocotb.log.error(debug_string)
+				assert(0)
+			
 # Simple broadcast test with enogth gap between rx and tx
 # packets such that all broadcast TXs are free 
 @cocotb.test()
