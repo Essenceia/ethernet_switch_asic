@@ -27,27 +27,56 @@ module tb ();
 	wire [7:0] uio_out;
 	wire [7:0] uio_oe;
 
-	// RX path
-	wire [1:0] phy_rx;
-	wire       phy_rx_v;
-	wire       phy_rx_err;
-	
-	// TX parth 
-	wire [1:0] phy_tx;
-	wire       phy_tx_v;
+	// cocotb lacks support for verilog array indexing
+	// RX0 path
+	wire [1:0] phy_rx0;
+	wire       phy_rx0_v;
+	wire       phy_rx0_err;
+	// RX1
+	wire [1:0] phy_rx1;
+	wire       phy_rx1_v;
+	wire       phy_rx1_err;
+	// RX2
+	wire [1:0] phy_rx2;
+	wire       phy_rx2_v;
+	wire       phy_rx2_err;
+		
+	// TX0 
+	wire [1:0] phy_tx0;
+	wire       phy_tx0_v;
+	// TX1
+	wire [1:0] phy_tx1;
+	wire       phy_tx1_v;
+	// TX2 
+	wire [1:0] phy_tx2;
+	wire       phy_tx2_v;
 
 	wire       tx_phase; 
 
-	assign ui_in[1:0] = phy_rx;
-	assign ui_in[2]   = phy_rx_v;
-	assign ui_in[3]   = phy_rx_err;
+	assign ui_in[1:0] = phy_rx0;
+	assign ui_in[2]   = phy_rx0_v;
+	assign ui_in[3]   = phy_rx0_err;
 
-	assign phy_tx      = uo_out[1:0];
-	assign phy_tx_v    = uo_out[2];
+	assign ui_in[5:4] = phy_rx1;
+	assign ui_in[6]   = phy_rx1_v;
+	assign ui_in[7]   = phy_rx1_err;
 
-	assign ui_in[7]    = tx_phase;
+	assign uio_in[1:0] = phy_rx2;
+	assign uio_in[2]   = phy_rx2_v;
+	assign uio_in[3]   = phy_rx2_err;
 
-	tt_um_teapot m_dut (
+	assign uio_in[4]   = tx_phase;
+
+	assign phy_tx0     = uo_out[1:0];
+	assign phy_tx0_v   = uo_out[2];
+
+	assign phy_tx1     = uo_out[6:5];
+	assign phy_tx1_v   = uo_out[7];
+
+	assign phy_tx0     = uio_out[6:5];
+	assign phy_tx0_v   = uio_out[7];
+
+	tt_um_coffeepot m_dut (
 		  .ui_in  (ui_in),    // Dedicated inputs
 		  .uo_out (uo_out),   // Dedicated outputs
 		  .uio_in (uio_in),   // IOs: Input path

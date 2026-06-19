@@ -12,6 +12,7 @@ import asyncio
 from array import array 
 
 import mac_utils
+import phy_utils
 
 import os
 if "GATES" in os.environ:
@@ -21,16 +22,13 @@ else:
 
 CLK_UNIT="ns"
 CLK_PERIOD=20
-TCK_UNIT=CLK_UNIT 
-TCK_PERIOD=77
-CLK_TIMEOUT_PERIOD=(CLK_PERIOD*1000)
 
-SC_CLK_DELAY=2
 
 def start_clk(dut):
 	clock = Clock(dut.clk, CLK_PERIOD, CLK_UNIT)
 	clk_task = cocotb.start_soon(clock.start()) #runs the clock "in the background" 
 	return clk_task
+
 
 # Reset sequence
 async def rst(dut, ena=1 ):
@@ -39,9 +37,7 @@ async def rst(dut, ena=1 ):
 	clk_task = start_clk(dut)
 	await ClockCycles(dut.clk, 2)
 	# set default phy rx
-	dut.phy_rx_v.value = "0"
-	dut.phy_rx.value = "X"*2
-	dut.phy_rx_err.value = "X"
+	phy_utils.set_all_rx(dut, 0, "X"*2, "X")
 	dut.ena.value = 0
 	await ClockCycles(dut.clk, 10)
 	dut.rst_n.value = 1
@@ -49,8 +45,9 @@ async def rst(dut, ena=1 ):
 	await ClockCycles(dut.clk, 20)
 
 # send only, used to test config frames where no response is expected
-async def send_frame(dut, rx: mac_utils.eth_frame):
-	await mac_utils.phy_stream_frame(dut, rx.raw())
+async def send_frame(dut, port_idx:int, rx: mac_utils.eth_frame):
+	await mac_utils.phy_stream_frame(dut, port_idx, rx.raw())
+	port_idx 
 
 async def send_and_check_frames(dut, rx: mac_utils.eth_frame, device_mac = mac_utils.DEFAULT_DEVICE_MAC):
 	tx_sent, tx = mac_utils.expected_response(rx, device_mac)
@@ -74,12 +71,13 @@ async def send_and_check_frames(dut, rx: mac_utils.eth_frame, device_mac = mac_u
 			assert(0)
 
 # Simple test 
-@cocotb.test(skip=True if GATES == "yes" else False)
-async def simple_rx_test(dut):
+@cocotb.test()
+async def broadcast_test(dut):
 	random.seed(0)
 	await rst(dut) 
 	for _ in range(0, 10):
-		await send_and_check_frames(dut, mac_utils.simple_frame())	
+		port_idx = random.randrange(0,3)
+		await send_frame(dut, port_idx, mac_utils.simple_frame())	
 	await ClockCycles(dut.clk, 10)
 
 @cocotb.test(skip=True if GATES == "yes" else False)

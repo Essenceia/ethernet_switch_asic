@@ -6,7 +6,6 @@ SIM ?= icarus
 FST ?= -fst # Use more efficient FST format
 TOPLEVEL_LANG ?= verilog
 SRC_DIR = $(PWD)/../src
-BF16_LIB_DIR = $(PWD)/../src/bf16/src
 PROJECT_SOURCES = 
 
 COMPILE_ARGS        += -DCOCOTB
@@ -15,12 +14,12 @@ ifneq ($(GATES),yes)
 
 # RTL simulation:
 SIM_BUILD	 	= sim_build/rtl
-VERILOG_SOURCES += $(wildcard $(SRC_DIR)/*.v) $(wildcard $(BF16_LIB_DIR)/*.v)
+VERILOG_SOURCES += $(wildcard $(SRC_DIR)/*.v)
 
 else
 
 # Gate level simulation:
-SIM_BUILD				= sim_build/gl
+SIM_BUILD		= sim_build/gl
 COMPILE_ARGS    += -DGL_TEST
 COMPILE_ARGS    += -DFUNCTIONAL
 COMPILE_ARGS    += -DUSE_POWER_PINS

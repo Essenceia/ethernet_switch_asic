@@ -14,6 +14,7 @@ from typing import NamedTuple, Optional
 import crc_utils 
 import app_utils
 import conf_utils
+import phy_utils
 
 APP_ETHTYPE = b"\x88\xB5"
 CONF_ETHTYPE = b"\x88\xB6"
@@ -79,28 +80,22 @@ class eth_frame:
 
 # lsbit first MSByte first
 
-async def phy_stream_frame(dut, raw):
-	cocotb.log.debug(f"raw frame {raw.hex()}")
+async def phy_stream_frame(dut, port_idx:int, raw):
+	cocotb.log.debug(f"raw frame to RX{port_idx}: {raw.hex()}")
 	preamble = random.randint(1,10)
-	dut.phy_rx_err.value = 0
 	for _ in range(1, preamble):
-		dut.phy_rx_v.value = 1
-		dut.phy_rx.value = 0
+		phy_utils.set_rx(dut, port_idx, v=1, data=0, err=0)
 		await ClockCycles(dut.clk,1)
 	for x in raw:
 		cocotb.log.debug(f"x {hex(x)}") 
 		for _ in range(0,4):
-			dut.phy_rx_v.value = 1
-			dut.phy_rx.value = x & 0x3
+			phy_utils.set_rx(dut, port_idx, v=1, data=x&0x3, err=0)
 			await ClockCycles(dut.clk,1)
-			cocotb.log.debug(f"{dut.phy_rx.value}")
 			x = x >> 2
 	# IPG
 	ipg = random.randint(1,10)
 	for _ in range(0, ipg):
-		dut.phy_rx_v.value = 0
-		dut.phy_rx_err.value = "X"
-		dut.phy_rx.value = "X"*2
+		phy_utils.set_rx(dut, port_idx, v=0, data="X"*2, err="X")
 		await ClockCycles(dut.clk,1)
 
 # convert from byte array where data is stored in the 2 lower bits 
