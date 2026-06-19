@@ -20,10 +20,15 @@ module tt_um_coffeepot #(
     input  wire       clk,      // clock
     input  wire       rst_n     // reset_n - low to reset
 );
+wire [7:5] uio_in_unused;
+wire       ena_unused; 
 // IO
 assign uio_oe = 8'b11100000;
 assign uo_out[4:3] = 2'd0;
 assign uio_out[4:0] = 5'd0;
+
+assign uio_in_unused = uio_in[7:5];
+assign ena_unused = ena; 
 
 // rst flop
 reg rst_n_q; 
