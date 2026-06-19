@@ -26,20 +26,26 @@ proc get_all_dff_clk_port { clk } {
 	return $ret
 }
 
-set mux_clk_cell [get_cells -hierarchical -regexp ".*m_ref_clk_mux"]
-set mux_clk_pin [get_first_output_pin $mux_clk_cell]
+set ref_clk_tx0_mux_pin [get_first_output_pin [get_cells -hierarchical -regexp ".*g_channel0.*m_ref_clk_mux"]]
+set ref_clk_tx1_mux_pin [get_first_output_pin [get_cells -hierarchical -regexp ".*g_channel1.*m_ref_clk_mux"]]
+set ref_clk_tx2_mux_pin [get_first_output_pin [get_cells -hierarchical -regexp ".*g_channel2.*m_ref_clk_mux"]]
 
-#can't use the combinational arg as it causes the drt to seg fault
-set ::env(OUTPUT_CLOCK_0) "dephase_clk_0"
-set ::env(OUTPUT_CLOCK_1) "dephase_clk_1"
-create_generated_clock -name $::env(OUTPUT_CLOCK_0) -source [get_ports $::env(CLOCK_PORT)] -master_clock [get_clocks $::env(CLOCK_PORT)] -divide_by 1 -invert $mux_clk_pin -add
-create_generated_clock -name $::env(OUTPUT_CLOCK_1) -source [get_ports $::env(CLOCK_PORT)] -master_clock [get_clocks $::env(CLOCK_PORT)] -divide_by 1 $mux_clk_pin -add
-set_clock_groups -logically_exclusive -group $::env(OUTPUT_CLOCK_0) -group $::env(OUTPUT_CLOCK_1)
+set ::env(OUTPUT_CLOCK_TX0) "dephase_clk_0"
+set ::env(OUTPUT_CLOCK_TX1) "dephase_clk_1"
+set ::env(OUTPUT_CLOCK_TX2) "dephase_clk_2"
+
+# double generated clock from same source not supported by openraod cts 
+create_generated_clock -name $::env(OUTPUT_CLOCK_0) -source [get_ports $::env(CLOCK_PORT)] -master_clock [get_clocks $::env(CLOCK_PORT)] -combinational $ref_clk_tx0_mux_pin -add
+create_generated_clock -name $::env(OUTPUT_CLOCK_1) -source [get_ports $::env(CLOCK_PORT)] -master_clock [get_clocks $::env(CLOCK_PORT)] -combinational $ref_clk_tx1_mux_pin -add
+create_generated_clock -name $::env(OUTPUT_CLOCK_2) -source [get_ports $::env(CLOCK_PORT)] -master_clock [get_clocks $::env(CLOCK_PORT)] -combinational $ref_clk_tx2_mux_pin -add
 
 set_propagated_clock [all_clocks]
 
+report_clock_properties [all_clocks]
 
-set ::env(PHY_RX_PINS) {ui_in[0] ui_in[1] ui_in[2] ui_in[3]}
-set ::env(PHY_TX_PINS) {uo_out[0] uo_out[1] uo_out[2]}
+set ::env(PHY_RX_PINS) {ui_in[0] ui_in[1] ui_in[2] ui_in[3] ui_in[4] ui_in[5] ui_in[6] ui_in[7] uio_in[0] uio_in[1] uio_in[2]}
+set ::env(PHY_TX0_PINS) {uo_out[0] uo_out[1] uo_out[2]}
+set ::env(PHY_TX1_PINS) {uo_out[5] uo_out[6] uo_out[7]}
+set ::env(PHY_TX2_PINS) {uio_out[5] uio_out[6] uio_out[7]}
 
 read_sdc $::env(DESIGN_DIR)/lan8720a.sdc

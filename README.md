@@ -1,6 +1,6 @@
-# 100Mbps open source ethernet switch ASIC
+# 100Mbps Ethernet Switch ASIC
 
-3 port fully open source unmanaged cut-through 100Mbps ethernet switch ASIC. 
+Fully open source 3 port cut-through 100Mbps ethernet switch ASIC targetting the Global Foundary 180nm MCU node. 
 
 ## Credits
 
@@ -8,5 +8,5 @@ Thanks to the Tiny Tapeout project, its contributors, and all the community work
 
 ## License 
 
-This hardware is distributed under the strongly reciprocal CERN Open Hardware Licence Version 2.
+This hardware is distributed under the **strongly** reciprocal CERN Open Hardware Licence Version 2.
 
