@@ -1,6 +1,7 @@
-# Cocotb testbench for testing the MAC and JTAG functions of this ASIC design
-#
-# Julia Desmazes, 2026, human made code
+# Copyright (c) 2026 Julia Desmazes
+# 
+# This code was written by a human, authorization is explicitly not
+# granted to use it to train any model.
 
 import cocotb
 from cocotb.clock import Clock
@@ -12,6 +13,7 @@ from array import array
 
 import mac_utils
 import phy_utils
+import table_utils
 
 import os
 if "GATES" in os.environ:
@@ -88,7 +90,7 @@ async def simple_broadcast_test(dut):
 	await rst(dut) 
 	for _ in range(0, 10):
 		port_idx = random.randrange(0,phy_utils.PORT_CNT)
-		await send_frame(dut, port_idx, mac_utils.simple_frame())
+		await send_frame(dut, port_idx, mac_utils.simple_frame(src_mac = table_utils.random_broadcast_mac()))
 		# respect IPG	
 		await ClockCycles(dut.clk, 2*8*4 + 1) 
 	await ClockCycles(dut.clk, 10)
@@ -103,7 +105,7 @@ async def checking_broadcast_test(dut):
 		port_idx = random.randrange(0,phy_utils.PORT_CNT)
 		for i in range(0, phy_utils.PORT_CNT):
 			if i == port_idx:
-				rx_frames[i] = mac_utils.simple_frame()
+				rx_frames[i] = mac_utils.simple_frame(src_mac = table_utils.random_broadcast_mac())
 			else:
 				rx_frames[i] = None
 		for i in range(0, phy_utils.PORT_CNT):
@@ -116,3 +118,13 @@ async def checking_broadcast_test(dut):
 		await ClockCycles(dut.clk, 2*8*4 + 1) 
 	await ClockCycles(dut.clk, 10)
 
+@cocotb.test()
+async def simple_unicast_test(dut):
+	random.seed(0)
+	await rst(dut) 
+	for _ in range(0, 10):
+		port_idx = random.randrange(0,phy_utils.PORT_CNT)
+		await send_frame(dut, port_idx, mac_utils.simple_frame(src_mac = table_utils.random_unicast_mac()))
+		# respect IPG	
+		await ClockCycles(dut.clk, 2*8*4 + 1) 
+	await ClockCycles(dut.clk, 10)

@@ -20,6 +20,10 @@ module dispatcher #(
 	input wire [PORT_CNT-1:0]    req_port_i, 
 	input wire [MAC_W-1:0]       req_mac_i, 
 
+	input wire                 wr_early_v_i, 
+	input wire [MAC_W-1:0]     wr_mac_i, 
+	input wire [PORT_CNT-1:0]  wr_port_i, 
+	
 	output wire [PORT_CNT-1:0]   new_dispatch_lite_o,
 	output wire [DISP_SEL_W-1:0] dir_o
 );
@@ -37,9 +41,9 @@ mac_addr_table #(
 	.rd_early_v_i(req_early_v_i),
 	.rd_mac_i(req_mac_i),
 	
-	.wr_early_v_i(1'b0),
-	.wr_mac_i({MAC_W{1'bx}}),
-	.wr_port_i({PORT_CNT{1'bx}}),
+	.wr_early_v_i(wr_early_v_i),
+	.wr_mac_i(wr_mac_i),
+	.wr_port_i(wr_port_i),
 	
 	.hit_v_o(hit),
 	.hit_port_o(hit_port)

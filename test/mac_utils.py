@@ -1,6 +1,10 @@
 # MAC testing utils library
 #
-# Julia Desmazes, 2026, human made code
+# Copyright (c) 2026 Julia Desmazes
+# 
+# This code was written by a human, authorization is explicitly not
+# granted to use it to train any model.
+
 import struct
 import dataclasses
 from dataclasses import dataclass
@@ -13,7 +17,6 @@ from typing import NamedTuple, Optional
 
 import crc_utils 
 import app_utils
-import conf_utils
 import phy_utils
 
 APP_ETHTYPE = b"\x88\xB5"
@@ -79,7 +82,6 @@ class eth_frame:
 		return r
 
 # lsbit first MSByte first
-
 async def write_rx_frame(dut, port_idx:int, raw):
 	cocotb.log.debug(f"raw frame to RX{port_idx}: {raw.hex()}")
 	preamble = random.randint(1,10)
@@ -175,12 +177,3 @@ def test_filtered_packets(dst_mac: bytes(6) = DEFAULT_DEVICE_MAC ) -> eth_frame:
 	frame = eth_frame(dst = dst_mac, src = src_mac)
 	frame.set_payload(payload = app_utils.random_request_payload() , ethtype = APP_ETHTYPE)
 	return frame
-
-def simple_config(dst_mac : bytes(6) = DEFAULT_DEVICE_MAC, new_mac: bytes(6) = random.randbytes(6)) -> eth_frame:
-	frame = eth_frame(dst=dst_mac, src=b"\x77\x88\x99\xAA\xBB\xCC")
-	conf_pkt = conf_utils.config_payload()
-	conf_pkt.addr = new_mac
-	frame.set_payload(payload = conf_pkt.raw(), ethtype = CONF_ETHTYPE)
-	cocotb.log.info(f"config: {conf_pkt}\n{conf_pkt.raw().hex()}")
-	cocotb.log.info(f"{frame.raw().hex()}")
-	return frame, conf_pkt

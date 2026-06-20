@@ -19,8 +19,12 @@ module lookup #(
 	input wire                req_early_v_i,
 	input wire [PORT_CNT-1:0] req_port_i, 
 	input wire [MAC_W-1:0]    req_mac_i,
-	
-	input wire [PORT_CNT-1:0] phy_tx_free_i,
+
+	input wire                 wr_early_v_i, 
+	input wire [MAC_W-1:0]     wr_mac_i, 
+	input wire [PORT_CNT-1:0]  wr_port_i, 	
+
+	input wire [PORT_CNT-1:0]  phy_tx_free_i,
 
 	output wire [PORT_CNT-1:0]   new_dispatch_o,
 	output wire [DISP_SEL_W-1:0] dir_o	
@@ -35,7 +39,12 @@ dispatcher m_dispatcher(
 	.req_v_i(req_v_i),
 	.req_early_v_i(req_early_v_i),
 	.req_port_i(req_port_i),
-	.req_mac_i(req_mac_i), 
+	.req_mac_i(req_mac_i),
+
+	.wr_early_v_i(wr_early_v_i),
+	.wr_mac_i(wr_mac_i),
+	.wr_port_i(wr_port_i),
+	 
 	.new_dispatch_lite_o(disp_lite),
 	.dir_o(dir)
 );

@@ -51,17 +51,19 @@ endgenerate
 // accumulated mac
 localparam MAC_W = MAC_ADDR_BYTES * 8;
 localparam MAC_V_CYCLES = MAC_W / PHY_W;
-wire [MAC_W-1:0] dst_mac[PORT_CNT-1:0];
+wire [MAC_W-1:0] header_mac[PORT_CNT-1:0];
 wire             dst_mac_v_next[PORT_CNT-1:0];
+wire             src_mac_v_next[PORT_CNT-1:0];
 
 generate
 	for(i = 0; i < PORT_CNT; i=i+1) begin: g_port_mac
-		assign dst_mac[i] = buff_q[i][MAC_W-1:0];
+		assign header_mac[i] = buff_q[i][MAC_W-1:0];
 		assign dst_mac_v_next[i] = ~buff_v_q[i][MAC_V_CYCLES] & buff_v_q[i][MAC_V_CYCLES-1];
+		assign src_mac_v_next[i] = ~buff_v_q[i][2*MAC_V_CYCLES] & buff_v_q[i][2*MAC_V_CYCLES-1];
 		
-		wire [MAC_W-1:0] debug_dst_mac;
+		wire [MAC_W-1:0] debug_header_mac;
 		wire             debug_dst_mac_v_next;
-		assign debug_dst_mac = dst_mac[i];
+		assign debug_header_mac = header_mac[i];
 		assign debug_dst_mac_v_next = dst_mac_v_next[i];
 	end
 endgenerate
@@ -71,14 +73,29 @@ wire                lookup_req_v;
 wire                lookup_req_early_v;
 wire [PORT_CNT-1:0] lookup_req_port; 
 wire [MAC_W-1:0]    lookup_mac; 
-arbitor m_arbitor(
+arbitor m_lookup_arbitor(
 	.clk(clk),
 	.req_early_i({dst_mac_v_next[2], dst_mac_v_next[1],dst_mac_v_next[0]}),
-	.req_mac_i({dst_mac[2], dst_mac[1], dst_mac[0]}),
+	.req_mac_i({header_mac[2], header_mac[1], header_mac[0]}),
 	.req_v_o(lookup_req_v), 
 	.req_early_v_o(lookup_req_early_v), 
 	.req_port_o(lookup_req_port),
 	.req_mac_o(lookup_mac)
+);
+// write abritration
+wire                wr_early_v; 
+wire [MAC_W-1:0]    wr_mac;
+wire [PORT_CNT-1:0] wr_port;
+wire                wr_v_unused; 
+
+arbitor m_wr_arbitor(
+	.clk(clk),
+	.req_early_i({src_mac_v_next[2], src_mac_v_next[1],src_mac_v_next[0]}),
+	.req_mac_i({header_mac[2], header_mac[1], header_mac[0]}),
+	.req_v_o(wr_v_unused), 
+	.req_early_v_o(wr_early_v), 
+	.req_port_o(wr_port),
+	.req_mac_o(wr_mac)
 );
 
 // lookup and dispatch 
@@ -91,6 +108,12 @@ lookup m_lookup(
 	.req_early_v_i(lookup_req_early_v),
 	.req_port_i(lookup_req_port),
 	.req_mac_i(lookup_mac), 
+
+	.wr_early_v_i(wr_early_v),
+	.wr_mac_i(wr_mac),
+	.wr_port_i(wr_port),
+	
+
 	.phy_tx_free_i(mac_tx_acc_i),
 	.new_dispatch_o(new_disp),
 	.dir_o(disp_dir)
