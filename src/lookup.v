@@ -12,6 +12,9 @@ module lookup #(
 	localparam DISP_SEL_W = PORT_CNT*(PORT_CNT-1),
 	parameter MAC_W = 48
 )(
+	input wire clk, 
+	input wire rst_n,
+
 	input wire                req_v_i, 
 	input wire [PORT_CNT-1:0] req_port_i, 
 	input wire [MAC_W-1:0]    req_mac_i,
@@ -29,15 +32,22 @@ wire [DISP_SEL_W-1:0] broadcast_dir;
 wire [DISP_SEL_W-1:0] unicast_dir;
  
 // broadcast
-dispatcher_broadcast m_dispatcher(
+dispatcher_broadcast m_dispatcher_broadcast(
 	.new_req_i(req_port_i), 
 	.new_dispatch_lite_o(broadcast_disp_lite),
 	.dir_o(broadcast_dir)
 );
 // unicast -> mac lookup, fallback to broadcast in case of no match
+dispatcher_unicast m_dispatcher_unicast(
+	.clk(clk), 
+	.rst_n(rst_n),
+	.req_v_i(req_v_i),
+	.req_port_i(req_port_i),
+	.req_mac_i(req_mac_i), 
+	.new_dispatch_lite_o(unicast_disp_lite),
+	.dir_o(unicast_dir)
+);
 assign unicast_match = 1'b0;
-assign unicast_disp_lite = {PORT_CNT{1'bx}};
-assign unicast_dir = {DISP_SEL_W{1'bx}};
 
 assign new_dispatch_o = phy_tx_free_i & (unicast_match ? unicast_disp_lite : broadcast_disp_lite);
 assign dir_o = unicast_match ? unicast_dir : broadcast_dir; 

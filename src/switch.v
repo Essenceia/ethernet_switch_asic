@@ -83,6 +83,9 @@ arbitor m_arbitor(
 wire [PORT_CNT-1:0]              new_disp; 
 wire [PORT_CNT*(PORT_CNT-1)-1:0] disp_dir; 
 lookup m_lookup(
+	.clk(clk), 
+	.rst_n(rst_n), 
+
 	.req_v_i(lookup_req_v),
 	.req_port_i(lookup_req_port),
 	.req_mac_i(lookup_mac), 

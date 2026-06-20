@@ -15,10 +15,11 @@ module dispatcher_unicast #(
 	input wire clk, 
 	input wire rst_n,
 
-	input wire             req_v_i, 
-	input wire [MAC_W-1:0] req_mac_i, 
+	input wire                   req_v_i,
+	input wire [PORT_CNT-1:0]    req_port_i, 
+	input wire [MAC_W-1:0]       req_mac_i, 
 
-	output wire [PORT_CNT-1:0] new_dispatch_lite_o,
+	output wire [PORT_CNT-1:0]   new_dispatch_lite_o,
 	output wire [DISP_SEL_W-1:0] dir_o
 );
 
@@ -48,15 +49,17 @@ localparam SEL_W = PORT_CNT-1;
 wire [DISP_SEL_W-1:0] dir_lite;
 wire [DISP_SEL_W-1:0] dir_hit_masked;
 wire [DISP_SEL_W-1:0] hit_mask;
-assign dir_lite = {{req_v_i[1:0]}, // tx2
-				   {req_v_i[2], req_v_i[0]}, // tx1
-                   {req_v_i[2:1]}};// tx0
+assign dir_lite = {{req_port_i[1:0]}, // tx2
+				   {req_port_i[2], req_port_i[0]}, // tx1
+                   {req_port_i[2:1]}};// tx0
 
-assign hit_mask = { {SEL_W{hit_port[2]}},
-					{SEL_W{hit_port[1]}},
-					{SEL_W{hit_port[0]}}}; 
+// fallback on broadcast in case of no hit
+assign hit_mask = { {SEL_W{hit_port[2] | ~hit}},
+					{SEL_W{hit_port[1] | ~hit}},
+					{SEL_W{hit_port[0] | ~hit}}}; 
 assign dir_hit_masked = dir_lite & hit_mask; 
 
-assign new_dispatch_lite_o = hit_o; 
+// output 
+assign new_dispatch_lite_o = ({PORT_CNT{~hit}} | hit_port) & ~req_port_i; 
 assign dir_o = dir_hit_masked; 
 endmodule
