@@ -26,7 +26,7 @@ module switch #(
 );
 localparam PREAMBLE_BYTES = 8; // preamble + sfd
 localparam MAC_ADDR_BYTES = 6; 
-localparam DATA_DELAY = 8 * (PREAMBLE_BYTES + MAC_ADDR_BYTES) + PHY_W;
+localparam DATA_DELAY = 8 * (PREAMBLE_BYTES + MAC_ADDR_BYTES) + 2*PHY_W;
 localparam BUF_W = DATA_DELAY;
 localparam BUF_V_W = DATA_DELAY / PHY_W; 
 
