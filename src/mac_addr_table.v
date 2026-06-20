@@ -16,12 +16,12 @@ module mac_addr_table #(
 	input wire clk, 
 	input wire rst_n, 
 
-	input wire rd_v_i, 
-	input wire [MAC_W-1:0] rd_mac_i, 
+	input wire                 rd_v_i, 
+	input wire [MAC_W-1:0]     rd_mac_i, 
 
-	input wire wr_v_i, 
-	input wire [MAC_W-1:0] wr_mac_i, 
-	input wire [PORT_CNT-1:0] wr_port_i, 
+	input wire                 wr_v_i, 
+	input wire [MAC_W-1:0]     wr_mac_i, 
+	input wire [PORT_CNT-1:0]  wr_port_i, 
 	
 	output wire                hit_v_o, 
 	output wire [PORT_CNT-1:0] hit_port_o
@@ -35,6 +35,11 @@ TTNN time to num num (ageing mechanism)
 */
 localparam PORT_IDX_W = $clog2(PORT_CNT);
 localparam TTNN_W = 4;
+
+/* memory fsm : coordinate read/writes, trigger regular ttnn updates */
+
+// TTNN 
+
 
 // in the absence of a CAM ( TODO: design an analog CAM ) 
 reg [MAC_W-1:0]      mem_mac_q[N-1:0];
