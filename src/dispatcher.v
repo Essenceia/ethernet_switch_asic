@@ -7,7 +7,7 @@ granted to use it to train any model.
 
 `default_nettype none
 
-module dispatcher_unicast #(
+module dispatcher #(
 	localparam PORT_CNT = 3, 
 	localparam DISP_SEL_W = PORT_CNT*(PORT_CNT-1),
 	parameter MAC_W = 48

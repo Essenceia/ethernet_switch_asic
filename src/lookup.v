@@ -24,32 +24,21 @@ module lookup #(
 	output wire [PORT_CNT-1:0]   new_dispatch_o,
 	output wire [DISP_SEL_W-1:0] dir_o	
 );
-wire [PORT_CNT-1:0] broadcast_disp_lite; 
-wire [PORT_CNT-1:0] unicast_disp_lite; 
-wire unicast_match;
-
-wire [DISP_SEL_W-1:0] broadcast_dir; 
-wire [DISP_SEL_W-1:0] unicast_dir;
+wire [PORT_CNT-1:0] disp_lite; 
+wire [DISP_SEL_W-1:0] dir;
  
-// broadcast
-dispatcher_broadcast m_dispatcher_broadcast(
-	.new_req_i(req_port_i), 
-	.new_dispatch_lite_o(broadcast_disp_lite),
-	.dir_o(broadcast_dir)
-);
 // unicast -> mac lookup, fallback to broadcast in case of no match
-dispatcher_unicast m_dispatcher_unicast(
+dispatcher m_dispatcher(
 	.clk(clk), 
 	.rst_n(rst_n),
 	.req_v_i(req_v_i),
 	.req_port_i(req_port_i),
 	.req_mac_i(req_mac_i), 
-	.new_dispatch_lite_o(unicast_disp_lite),
-	.dir_o(unicast_dir)
+	.new_dispatch_lite_o(disp_lite),
+	.dir_o(dir)
 );
-assign unicast_match = 1'b0;
 
-assign new_dispatch_o = phy_tx_free_i & unicast_disp_lite;
-assign dir_o = unicast_dir; 
+assign new_dispatch_o = phy_tx_free_i & disp_lite;
+assign dir_o = dir; 
 
 endmodule	
