@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.115 (w)1999-2023 BSI
-[*] Sun Jun 21 04:27:50 2026
+[*] Sun Jun 21 18:00:47 2026
 [*]
 [dumpfile] "/home/pitchu/asic/coffeepot/test/tb.vcd"
-[dumpfile_mtime] "Sun Jun 21 04:27:39 2026"
-[dumpfile_size] 484549
+[dumpfile_mtime] "Sun Jun 21 17:59:23 2026"
+[dumpfile_size] 392504
 [savefile] "/home/pitchu/asic/coffeepot/test/tb.gtkw"
-[timestart] 9330000
-[size] 1920 1007
-[pos] -6 -6
-*-22.948795 64580000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[timestart] 257540000
+[size] 1910 470
+[pos] -1 -1
+*-23.948795 888610000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] tb.
 [treeopen] tb.m_dut.
 [treeopen] tb.m_dut.m_switch.
@@ -17,10 +17,10 @@
 [treeopen] tb.m_dut.m_switch.m_lookup.
 [treeopen] tb.m_dut.m_switch.m_lookup.m_dispatcher.
 [treeopen] tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.
-[sst_width] 575
-[signals_width] 270
+[sst_width] 307
+[signals_width] 253
 [sst_expanded] 1
-[sst_vpaned_height] 566
+[sst_vpaned_height] 211
 @28
 tb.clk
 tb.rst_n
@@ -37,62 +37,76 @@ tb.phy_rx1_v
 tb.phy_rx2_v
 @200
 -tx
-@29
+@28
 [color] 2
 tb.phy_tx0_v
-@28
 [color] 2
 tb.phy_tx1_v
 [color] 2
 tb.phy_tx2_v
 @200
--wr arb
+-table
 @28
-tb.m_dut.m_switch.m_wr_arbitor.req_early_v_o
-@22
-tb.m_dut.m_switch.m_wr_arbitor.req_mac_o[47:0]
-@200
--table wr
+tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.alive_v[3:0]
+@24
+tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_alloc_cnt[2:0]
 @28
-tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.fsm_q[1:0]
-tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.wr_lookup_mac_sel_q
-@22
-tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.rd_mac[47:0]
-tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.mac_hit[3:0]
+tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.cocotb_nobody_is_dead
+@200
+-tb
 @28
-tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.wr_mac_group
-tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.wr_v
-@22
-tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.wr_sel[3:0]
+tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.hit_v_o
+@800028
+tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.hit_port_o[2:0]
+@28
+(0)tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.hit_port_o[2:0]
+(1)tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.hit_port_o[2:0]
+(2)tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.hit_port_o[2:0]
+@1001200
+-group_end
+@28
+tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.debug_hit_v_o
+tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.g_mem[1].debug_mem_port[1:0]
 @200
--victime
+-mem[0]
 @22
-tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.victime_q[3:0]
-@200
--debug table
-@22
+[color] 2
 tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.g_mem[0].debug_mem_mac[47:0]
 @28
 tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.g_mem[0].debug_mem_port[1:0]
 @22
 tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.g_mem[0].debug_mem_ttnn[3:0]
 @200
--ttnn timeout
-@28
-tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.m_ttnn_timer.update_req_o
+-mem[1]
 @22
-tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.m_ttnn_timer.cnt_q[3:0]
+[color] 2
+tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.g_mem[1].debug_mem_mac[47:0]
+@28
+tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.g_mem[1].debug_mem_port[1:0]
 @200
--replacement policy
+-mem[2]
 @22
-tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.m_replacement_policy.ttnn_i[15:0]
+[color] 2
+tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.g_mem[2].debug_mem_mac[47:0]
 @28
-tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.m_replacement_policy.lvl0[1:0]
-tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.m_replacement_policy.lvl1
-tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.m_replacement_policy.idx_lvl1[1:0]
-tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.m_replacement_policy.debug_idx_lvl0_0[1:0]
-tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.m_replacement_policy.debug_idx_lvl0_1[1:0]
-tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.m_replacement_policy.victime_o[3:0]
-tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_alloc_cnt[1:0]
+tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.g_mem[2].debug_mem_port[1:0]
+@c00022
+tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.g_mem[2].debug_mem_ttnn[3:0]
+@28
+(0)tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.g_mem[2].debug_mem_ttnn[3:0]
+(1)tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.g_mem[2].debug_mem_ttnn[3:0]
+(2)tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.g_mem[2].debug_mem_ttnn[3:0]
+(3)tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.g_mem[2].debug_mem_ttnn[3:0]
+@1401200
+-group_end
+@200
+-mem[3]
+@23
+[color] 2
+tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.g_mem[3].debug_mem_mac[47:0]
+@28
+tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.g_mem[3].debug_mem_port[1:0]
+@22
+tb.m_dut.m_switch.m_lookup.m_dispatcher.m_table.g_mem[3].debug_mem_ttnn[3:0]
 [pattern_trace] 1
 [pattern_trace] 0

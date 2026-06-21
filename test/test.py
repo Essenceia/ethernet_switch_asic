@@ -242,7 +242,7 @@ async def table_realloc_test(dut):
 async def table_stress_read(dut):
 	set_random_seed()
 	await rst(dut)
-	for _ in range(0, 10):
+	for _ in range(0, 50):
 		wr_credits = table_utils.ENTRY_NUM - 1
 		table_utils.clear_seen_src_mac()
 		# write an entry
@@ -251,7 +251,7 @@ async def table_stress_read(dut):
 		await check_broadcast(dut, src_port = rd_port, src_mac = rd_mac, dst_mac = table_utils.random_unicast_mac())
 		table_utils.add_seen_src_mac(rd_mac, rd_port)	
 		await ClockCycles(dut.clk, 2*8*4 + 1) 
-		for _ in range(0, 10):
+		for _ in range(0, 5):
 			# random write if credits available
 			if random.randrange(0,100) > 20 and wr_credits > 0:
 				new_src_mac = table_utils.random_unicast_mac()
