@@ -180,4 +180,13 @@ end
 assign hit_v_o = |mac_hit;
 assign hit_port_o = port_hit_full; 
 
+`ifdef COCOTB
+localparam N_IDX_W = $clog2(N);
+
+wire               cocotb_nobody_is_dead; 
+wire [N_IDX_W-1:0] cocotb_entry_alloc_cnt; 
+
+assign cocotb_nobody_is_dead = &alive_v;
+assign cocotb_entry_alloc_cnt = alive_v[3] + alive_v[2] + alive_v[1] + alive_v[0];
+`endif
 endmodule 

@@ -9,6 +9,8 @@ import random
 ENTRY_EXPIERY_TIMEOUT = 4000 
 ENTRY_EXPIERY_TIMEOUT_SHORT = 2000 
 
+ENTRY_NUM = 4 
+
 # generate random broadcast mac address for broadcast testing
 def random_broadcast_mac() -> bytes(6):
 	mac = bytearray()

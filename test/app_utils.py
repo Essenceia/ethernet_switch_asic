@@ -11,15 +11,15 @@ def random_request_payload() -> bytes(46):
 	a = bytearray(0)
 	b = bytearray(0)
 	if random.randint(0,100) < 10:
-		a.append(random.randint(0,256))
+		a.append(random.randint(0,255))
 	else:
 		a.append(0)
 	if random.randint(0,100) < 10:
-		b.append(random.randint(0,256))
+		b.append(random.randint(0,255))
 	else: 
 		b.append(0)
-	a.append(random.randint(0,256))
-	b.append(random.randint(0,256))
+	a.append(random.randint(0,255))
+	b.append(random.randint(0,255))
 	req = bytearray(0)
 	req += a
 	req += b

@@ -188,4 +188,39 @@ async def table_entry_expire_test(dut):
 	await ClockCycles(dut.clk, table_utils.ENTRY_EXPIERY_TIMEOUT)
 	await check_broadcast(dut, src_port = phy_utils.random_exclude_port(origin_port), src_mac = table_utils.random_unicast_mac(), dst_mac = src_mac)
 
+@cocotb.test()
+async def table_multialloc_test(dut): 
+	set_random_seed()
+	await rst(dut) 
+	for i in range(0, 10): 
+		dst_mac = table_utils.random_broadcast_mac() 
+		src_mac = table_utils.random_unicast_mac() 
+		origin_port = random.randrange(0, phy_utils.PORT_CNT)
+		await check_broadcast(dut, src_port = origin_port, src_mac = src_mac, dst_mac = dst_mac)
+		# IPG
+		await ClockCycles(dut.clk, 2*8*4 + 1)
+		# check entry is properly allocated
+		await check_unicast(dut, src_port = phy_utils.random_exclude_port(origin_port), dst_port = origin_port, dst_mac = src_mac, src_mac = table_utils.random_unicast_mac())
+		if GATES == "":
+			if 2*(i+1) >= table_utils.ENTRY_NUM: 
+				assert dut.m_dut.m_switch.m_lookup.m_dispatcher.m_table.cocotb_nobody_is_dead.value == 1, f"Unexpacted invalid table entry"
+			else:
+				alloc_cnt =  dut.m_dut.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_alloc_cnt.value
+				assert alloc_cnt == 2*(i+1), f"Expecting {i} allocated table entries got {alloc_cnt}"
+		# IPG
+		await ClockCycles(dut.clk, 2*8*4 + 1)
 
+@cocotb.test()
+async def table_realloc_test(dut): 
+	set_random_seed()
+	src_mac = table_utils.random_unicast_mac() 
+	await rst(dut) 
+	for i in range(0, 10): 
+		dst_mac = table_utils.random_broadcast_mac() 
+		origin_port = random.randrange(0, phy_utils.PORT_CNT)
+		await check_broadcast(dut, src_port = origin_port, src_mac = src_mac, dst_mac = dst_mac)
+		# IPG
+		await ClockCycles(dut.clk, 2*8*4 + 1)
+		if GATES == "": 
+			assert dut.m_dut.m_switch.m_lookup.m_dispatcher.m_table.cocotb_nobody_is_dead.value == 0, f"Unexpacted multiple allocated table entries"
+			assert dut.m_dut.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_alloc_cnt.value == 1, f"Expecting a single allocated table entry"
