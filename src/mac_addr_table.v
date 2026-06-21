@@ -138,11 +138,11 @@ generate
 	end // for
 endgenerate
 
-reg wr_lookup_mac_sel_q; 
+reg rd_mac_sel_q; 
 always @(posedge clk) 
-	wr_lookup_mac_sel_q <= ~rd_early_v_i;
+	rd_mac_sel_q <= rd_early_v_i;
 
-assign rd_mac = wr_lookup_mac_sel_q ? wr_mac_i: rd_mac_i;	
+assign rd_mac = rd_mac_sel_q ? rd_mac_i : wr_mac_i;	
 
 // read - parallel lookup
 generate
@@ -178,11 +178,15 @@ always @(*) begin
 end
 
 (* dont_touch , keep *)wire [N-1:0] debug_mac_hit;  
+(* dont_touch , keep *)wire [N-1:0] debug_entry_alive;  
 (* dont_touch , keep *)wire [PORT_CNT-1:0] debug_port_hit_full;
 assign debug_mac_hit = mac_hit; 
 assign debug_port_hit_full = port_hit_full;
+assign debug_entry_alive = alive_v;
 
-assign hit_v_o    = |mac_hit;
+
+
+assign hit_v_o    = |mac_hit & rd_v_i;
 assign hit_port_o = port_hit_full; 
 
 `ifdef COCOTB
