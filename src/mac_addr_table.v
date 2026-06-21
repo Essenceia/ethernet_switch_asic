@@ -103,9 +103,9 @@ always @(*) begin
 	/* verilator lint_off CASEOVERLAP */
 	(* parallel_case *)
 	casez(wr_port_i)
-		3'b??1: wr_port_idx = 2'd0;
-		3'b?1?: wr_port_idx = 2'd1;
-		3'b1??: wr_port_idx = 2'd2;
+		3'b??1:  wr_port_idx = 2'd0;
+		3'b?1?:  wr_port_idx = 2'd1;
+		3'b1??:  wr_port_idx = 2'd2;
 		default: wr_port_idx = {PORT_IDX_W{1'bx}};
 	endcase
 	/* verilator lint_on CASEOVERLAP */
@@ -117,13 +117,13 @@ generate
 	for(i=0; i < N; i=i+1)begin: g_mem
 		// TTNN
 		always @(posedge clk) 
-			if (~rst_n )                 mem_ttnn_q[i] <= {TTNN_W{1'b0}};
+			if (~rst_n )               mem_ttnn_q[i] <= {TTNN_W{1'b0}};
 			else if (wr_v & wr_sel[i]) mem_ttnn_q[i] <= {TTNN_W{1'b1}};
-			else if  (fsm_q == UPDATE)   mem_ttnn_q[i] <= mem_ttnn_q[i] - {{TTNN_W-1{1'b0}},alive_v[i]}; // can do sequential update for area		
+			else if  (fsm_q == UPDATE) mem_ttnn_q[i] <= mem_ttnn_q[i] - {{TTNN_W-1{1'b0}},alive_v[i]}; // can do sequential update for area		
 
 		always @(posedge clk) begin
 			if (wr_v & wr_sel[i]) begin
-				mem_mac_q[i] <= wr_mac_i;
+				mem_mac_q[i]  <= wr_mac_i;
 				mem_port_q[i] <= wr_port_idx;
 			end
 		end
@@ -148,8 +148,8 @@ assign rd_mac = wr_lookup_mac_sel_q ? wr_mac_i: rd_mac_i;
 generate
 	for(i=0; i < N; i=i+1)begin: g_parallel_lookup
 		assign mac_hit_lite[i] = mem_mac_q[i] == rd_mac; 
-		assign alive_v[i] = |mem_ttnn_q[i];
-		assign mac_hit[i] = mac_hit_lite[i] & alive_v[i]; 
+		assign alive_v[i]      = |mem_ttnn_q[i];
+		assign mac_hit[i]      = mac_hit_lite[i] & alive_v[i]; 
 	end
 endgenerate 
 
@@ -157,7 +157,7 @@ reg [PORT_IDX_W-1:0] port_hit;
 always @(*) begin
 	/* verilator lint_off CASEOVERLAP */
 	(* parallel_case *)
-	casez(mac_hit_lite)
+	casez(mac_hit)
 		4'b???1: port_hit = mem_port_q[0];
 		4'b??1?: port_hit = mem_port_q[1];
 		4'b?1??: port_hit = mem_port_q[2];
@@ -182,7 +182,7 @@ end
 assign debug_mac_hit = mac_hit; 
 assign debug_port_hit_full = port_hit_full;
 
-assign hit_v_o = |mac_hit;
+assign hit_v_o    = |mac_hit;
 assign hit_port_o = port_hit_full; 
 
 `ifdef COCOTB
@@ -191,7 +191,7 @@ localparam N_IDX_W = $clog2(N);
 wire               cocotb_nobody_is_dead; 
 wire [N_IDX_W-1:0] cocotb_entry_alloc_cnt; 
 
-assign cocotb_nobody_is_dead = &alive_v;
+assign cocotb_nobody_is_dead  = &alive_v;
 assign cocotb_entry_alloc_cnt = alive_v[3] + alive_v[2] + alive_v[1] + alive_v[0];
 `endif
 endmodule 
