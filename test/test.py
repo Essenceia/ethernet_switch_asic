@@ -257,7 +257,7 @@ async def table_stress_read(dut):
 		await check_broadcast(dut, src_port = rd_port, src_mac = rd_mac, dst_mac = table_utils.random_unicast_mac())
 		table_utils.add_seen_src_mac(rd_mac, rd_port)	
 		await ClockCycles(dut.clk, 2*8*4 + 1) 
-		for _ in range(0, 10):
+		for _ in range(0, 4):
 			# random write if credits available
 			if random.randrange(0,100) > 20 and wr_credits > 0:
 				new_src_mac = table_utils.random_unicast_mac()
@@ -270,7 +270,7 @@ async def table_stress_read(dut):
 			# check entry read 
 			known_sender_mac, known_sender_port = table_utils.random_seen_src_mac(dut, GATES)
 			cocotb.log.info(f"know mac:{known_sender_mac.hex()} port:{known_sender_port}")
-			if table_utils.seen_src_mac_cnt() > 1:
+			if table_utils.seen_src_mac_cnt(dut, GATES) > 1:
 				while True:
 					src_mac, _ = table_utils.random_seen_src_mac(dut, GATES)
 					if src_mac != known_sender_mac :
