@@ -100,17 +100,17 @@ async def simple_broadcast_test(dut):
 	await rst(dut) 
 	for _ in range(0, 10):
 		port_idx = random.randrange(0,phy_utils.PORT_CNT)
-		await send_frame(dut, port_idx, mac_utils.simple_frame(src_mac = table_utils.random_broadcast_mac()))
+		await send_frame(dut, port_idx, mac_utils.simple_frame(dst_mac = table_utils.random_broadcast_mac()))
 		# respect IPG	
 		await ClockCycles(dut.clk, 2*8*4 + 1) 
 	await ClockCycles(dut.clk, 10)
 
-async def check_broadcast(dut, src_port:int, src_mac: bytes(6)):
+async def check_broadcast(dut, src_port:int, src_mac: bytes(6), dst_mac: bytes(6)):
 	rx_frames = {}
 	tx_frames = {}
 	for i in range(0, phy_utils.PORT_CNT):
 		if i == src_port:
-			rx_frames[i] = mac_utils.simple_frame(src_mac = src_mac)
+			rx_frames[i] = mac_utils.simple_frame(src_mac = src_mac, dst_mac = dst_mac)
 		else:
 			rx_frames[i] = None
 	for i in range(0, phy_utils.PORT_CNT):
@@ -128,8 +128,9 @@ async def checking_broadcast_test(dut):
 	await rst(dut) 
 	for _ in range(0, 10):
 		port_idx = random.randrange(0,phy_utils.PORT_CNT)
-		src_mac = table_utils.random_broadcast_mac()
-		await check_broadcast(dut, src_port=port_idx, src_mac=src_mac)
+		src_mac = table_utils.random_unicast_mac()
+		dst_mac = table_utils.random_broadcast_mac()
+		await check_broadcast(dut, src_port=port_idx, src_mac=src_mac, dst_mac = dst_mac)
 		# respect IPG	
 		await ClockCycles(dut.clk, 2*8*4 + 1) 
 	await ClockCycles(dut.clk, 10)
@@ -155,29 +156,36 @@ async def simple_unicast_test(dut):
 	set_random_seed()
 	await rst(dut) 
 	target_mac =table_utils.random_unicast_mac() 
+	dst_mac =table_utils.random_unicast_mac() 
 	target_port = random.randrange(0,phy_utils.PORT_CNT)
 	cocotb.log.info(f"unicast target src mac {target_mac.hex()} port RX{target_port}")
 	# send packet with source, table is empty, should be broadcasted
-	await check_broadcast(dut, src_port = target_port, src_mac = target_mac)
+	await check_broadcast(dut, src_port = target_port, src_mac = target_mac, dst_mac = dst_mac)
 
 	# send packets to be routed to original port 
-	for _ in range(0, 10):
+	for _ in range(0, 5): 
 		pkt_port = phy_utils.random_exclude_port(target_port) 		
 		ignored_mac = table_utils.random_broadcast_mac() # using broadcast mac to prevent it being written to the table
 		cocotb.log.info(f"ignored src mac {ignored_mac.hex()}")
 		await check_unicast(dut, src_port = pkt_port, dst_port = target_port, dst_mac = target_mac, src_mac = ignored_mac)
 		# respect IPG	
 		await ClockCycles(dut.clk, 2*8*4 + 1) 
-	await ClockCycles(dut.clk, 10)
+	await ClockCycles(dut.clk, table_utils.ENTRY_EXPIERY_TIMEOUT_SHORT)
+	
+	# check entry has expired
+	pkt_port = phy_utils.random_exclude_port(target_port) 		
+	await check_broadcast(dut, src_port = pkt_port, src_mac = target_mac, dst_mac = dst_mac)
 
 @cocotb.test()
 async def table_entry_expire_test(dut):
 	set_random_seed()
 	await rst(dut) 
-	src_mac =table_utils.random_unicast_mac() 
+	src_mac = table_utils.random_unicast_mac() 
 	cocotb.log.info(f"unicast src mac {src_mac.hex()}")
 	# send packet with source, table is empty, should be broadcasted
-	await check_broadcast(dut, src_port = random.randrange(0, phy_utils.PORT_CNT), src_mac = src_mac)
-	await ClockCycles(dut.clk, 5000)
+	origin_port = random.randrange(0, phy_utils.PORT_CNT)
+	await check_broadcast(dut, src_port = origin_port, src_mac = src_mac, dst_mac = table_utils.random_broadcast_mac())
+	await ClockCycles(dut.clk, table_utils.ENTRY_EXPIERY_TIMEOUT)
+	await check_broadcast(dut, src_port = phy_utils.random_exclude_port(origin_port), src_mac = table_utils.random_unicast_mac(), dst_mac = src_mac)
 
 
