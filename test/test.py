@@ -241,20 +241,39 @@ async def table_realloc_test(dut):
 @cocotb.test()
 async def table_stress_read(dut):
 	set_random_seed()
-	await rst(dut) 
+	await rst(dut)
 	for _ in range(0, 10):
 		wr_credits = table_utils.ENTRY_NUM - 1
+		table_utils.clear_seen_set()
 		# write an entry
 		rd_port = random.randrange(0, phy_utils.PORT_CNT)
 		rd_mac = table_utils.random_unicast_mac()
 		await check_broadcast(dut, src_port = rd_port, src_mac = rd_mac, dst_mac = table_utils.random_unicast_mac())
+		table_utils.add_seen_src_mac(rd_mac, rd_port)	
+		await ClockCycles(dut.clk, 2*8*4 + 1) 
 		for _ in range(0, 10):
 			# random write if credits available
 			if random.randrange(0,100) > 20 and wr_credits > 0:
-				await check_broadcast(dut, src_port = random.randrange(0, phy_utils.PORT_CNT), src_mac = table_utils.random_unicast_mac(), dst_mac = table_utils.random_unicast_mac())
+				new_src_mac = table_utils.random_unicast_mac()
+				new_src_port = random.randrange(0, phy_utils.PORT_CNT)
+ 				await check_broadcast(dut, src_port = new_src_port, src_mac = new_src_mac, dst_mac = table_utils.random_unicast_mac())
 				wr_credits = wr_credits - 1	
+				table_utils.add_seen_src_mac(new_src_mac, new_src_port)
+				await ClockCycles(dut.clk, 2*8*4 + 1) 
 			# check entry read 
-			await check_unicast(dut, src_port = phy_utils.random_exclude_port(rd_port), dst_port = rd_port, dst_mac = rd_mac, src_mac = table_utils.random_unicast_mac())
+			know_sender_mac, known_sender_port = table_utils.random_seen_src_mac()
+
+			if table_utils.seen_src_mac_cnt() > 1:
+				while True:
+					src_mac, _ = table_utils.random_seen_src_mac()
+					if src_mac != know_sender_mac :
+						break
+			else:
+				src_mac = table_utils.random_unicast_mac()
+			src_port = random.randrange(0, phy_utils.PORT_CNT) # update port if already allocated
+			await check_unicast(dut, src_port = src_port, dst_port = know_sender_port, dst_mac = know_sender_mac, src_mac = src_mac)
+			table_utils.add_seen_src_mac(src_mac, src_port)
+			await ClockCycles(dut.clk, 2*8*4 + 1) 
 			
 		
 

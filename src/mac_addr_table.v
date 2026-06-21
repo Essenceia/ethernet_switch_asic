@@ -205,7 +205,7 @@ assign hit_v_o    = |mac_hit & rd_v_i;
 assign hit_port_o = port_hit_full; 
 
 `ifdef COCOTB
-localparam N_IDX_W = $clog2(N);
+localparam N_IDX_W = $clog2(N+1);
 
 wire               cocotb_nobody_is_dead; 
 wire [N_IDX_W-1:0] cocotb_entry_alloc_cnt; 
