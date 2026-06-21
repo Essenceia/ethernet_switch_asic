@@ -59,7 +59,7 @@ always @(posedge clk) begin
 		case(fsm_q) 
 			IDLE:    fsm_q <= wr_early_v_i ? WRITE : req_ttnn_update ? UPDATE : IDLE; 
 			WRITE:   fsm_q <= ~rd_v_i ? IDLE: WRITE; 
-			UPDATE:  fsm_q <= IDLE; 
+			UPDATE:  fsm_q <= wr_early_v_i? WRITE : IDLE; 
 			default: fsm_q <= IDLE; 
 		endcase
 	end
@@ -209,9 +209,14 @@ localparam N_IDX_W = $clog2(N+1);
 
 wire               cocotb_nobody_is_dead; 
 wire [N_IDX_W-1:0] cocotb_entry_alloc_cnt; 
+wire [MAC_W-1:0]   cocotb_entry_mac[N-1:0];
+wire [TTNN_W-1:0]  cocotb_entry_ttnn[N-1:0];
 
 assign cocotb_nobody_is_dead  = &alive_v;
 assign cocotb_entry_alloc_cnt = alive_v[3] + alive_v[2] + alive_v[1] + alive_v[0];
+assign cocotb_entry_mac       = mem_mac_q; 
+assign cocotb_entry_ttnn      = mem_ttnn_q; 
+
 `endif
 `ifdef FORMAL 
 //sva_onehot_port_hit:    assert property(@posedge (clk) hit_v_o |-> $onehot(mac_hit_lite)); 

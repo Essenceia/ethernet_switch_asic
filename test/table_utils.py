@@ -56,3 +56,9 @@ def random_seen_src_mac() -> tuple(bytes(6), int):
 	assert len(_seen_mac) > 0, f"Empty seen list"
 	assert len(_seen_mac) <= ENTRY_NUM, f"Unexpected seen list length, got {len(_seen_mac)}"
 	return _seen_mac[random.randrange(0,len(_seen_mac))]
+
+
+def _check_alive_margin(dut, mac : bytes(6)) -> bool:
+	for i in range(0, ENTRY_NUM):
+		entry_mac =  dut.m_dut.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_mac(i).value 
+

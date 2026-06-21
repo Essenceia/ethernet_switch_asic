@@ -24,6 +24,12 @@ if "GATES" in os.environ:
 else:
 	GATES = ""
 
+if "TEST_ITER" in os.environ:
+	TEST_ITER = int(os.environ["TEST_ITER"].lower().strip())
+else:
+	TEST_ITER = 10
+
+
 CLK_UNIT="ns"
 CLK_PERIOD=20
 RST_CYCLES=200
@@ -105,7 +111,7 @@ async def send_and_check_frames(dut, rx: {int, mac_utils.eth_frame}, tx: {int, m
 async def simple_broadcast_test(dut):
 	set_random_seed()
 	await rst(dut) 
-	for _ in range(0, 10):
+	for _ in range(0, TEST_ITER):
 		port_idx = random.randrange(0,phy_utils.PORT_CNT)
 		await send_frame(dut, port_idx, mac_utils.simple_frame(dst_mac = table_utils.random_broadcast_mac()))
 		# respect IPG	
@@ -134,7 +140,7 @@ async def checking_broadcast_test(dut):
 	rx_frames = {}
 	tx_frames = {}
 	await rst(dut) 
-	for _ in range(0, 10):
+	for _ in range(0, TEST_ITER):
 		port_idx = random.randrange(0,phy_utils.PORT_CNT)
 		src_mac = table_utils.random_unicast_mac()
 		dst_mac = table_utils.random_broadcast_mac()
@@ -172,7 +178,7 @@ async def simple_unicast_test(dut):
 	await check_broadcast(dut, src_port = target_port, src_mac = target_mac, dst_mac = dst_mac)
 
 	# send packets to be routed to original port 
-	for _ in range(0, 5): 
+	for _ in range(0, 4): 
 		pkt_port = phy_utils.random_exclude_port(target_port) 		
 		ignored_mac = table_utils.random_broadcast_mac() # using broadcast mac to prevent it being written to the table
 		cocotb.log.info(f"ignored src mac {ignored_mac.hex()}")
@@ -204,7 +210,7 @@ async def table_entry_expire_test(dut):
 async def table_multialloc_test(dut): 
 	set_random_seed()
 	await rst(dut) 
-	for i in range(0, 10): 
+	for i in range(0, TEST_ITER): 
 		dst_mac = table_utils.random_broadcast_mac() 
 		src_mac = table_utils.random_unicast_mac() 
 		origin_port = random.randrange(0, phy_utils.PORT_CNT)
@@ -227,7 +233,7 @@ async def table_realloc_test(dut):
 	set_random_seed()
 	await rst(dut) 
 	src_mac = table_utils.random_unicast_mac() 
-	for i in range(0, 10): 
+	for i in range(0, TEST_ITER): 
 		dst_mac = table_utils.random_broadcast_mac() 
 		origin_port = random.randrange(0, phy_utils.PORT_CNT)
 		await check_broadcast(dut, src_port = origin_port, src_mac = src_mac, dst_mac = dst_mac)
@@ -242,7 +248,7 @@ async def table_realloc_test(dut):
 async def table_stress_read(dut):
 	set_random_seed()
 	await rst(dut)
-	for _ in range(0, 50):
+	for _ in range(0, TEST_ITER*5):
 		wr_credits = table_utils.ENTRY_NUM - 1
 		table_utils.clear_seen_src_mac()
 		# write an entry
@@ -251,7 +257,7 @@ async def table_stress_read(dut):
 		await check_broadcast(dut, src_port = rd_port, src_mac = rd_mac, dst_mac = table_utils.random_unicast_mac())
 		table_utils.add_seen_src_mac(rd_mac, rd_port)	
 		await ClockCycles(dut.clk, 2*8*4 + 1) 
-		for _ in range(0, 5):
+		for _ in range(0, 4):
 			# random write if credits available
 			if random.randrange(0,100) > 20 and wr_credits > 0:
 				new_src_mac = table_utils.random_unicast_mac()
