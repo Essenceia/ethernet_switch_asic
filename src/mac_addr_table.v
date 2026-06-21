@@ -178,7 +178,7 @@ always @(*) begin
 end
 
 (* dont_touch , keep *)wire [N-1:0] debug_mac_hit;  
-(* dont_touch , keep *)wire         debug_mac_o;  
+(* dont_touch , keep *)wire         debug_hit_v_o;  
 (* dont_touch , keep *)wire [N-1:0] debug_entry_alive;  
 (* dont_touch , keep *)wire [PORT_CNT-1:0] debug_port_hit_full;
 (* dont_touch , keep *)wire [PORT_CNT-1:0] debug_rd_v;
@@ -186,7 +186,7 @@ assign debug_mac_hit = mac_hit;
 assign debug_port_hit_full = port_hit_full;
 assign debug_entry_alive = alive_v;
 assign debug_rd_v = rd_v_i;
-
+assign debug_hit_v_o = hit_v_o;
 
 assign hit_v_o    = |mac_hit & rd_v_i;
 assign hit_port_o = port_hit_full; 
