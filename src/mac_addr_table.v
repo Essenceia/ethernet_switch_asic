@@ -177,8 +177,8 @@ always @(*) begin
 	endcase
 end
 
-(* dont_touch *)wire [N-1:0] debug_mac_hit;  
-(* dont_touch *)wire [PORT_CNT-1:0] debug_port_hit_full;
+(* dont_touch , keep *)wire [N-1:0] debug_mac_hit;  
+(* dont_touch , keep *)wire [PORT_CNT-1:0] debug_port_hit_full;
 assign debug_mac_hit = mac_hit; 
 assign debug_port_hit_full = port_hit_full;
 
