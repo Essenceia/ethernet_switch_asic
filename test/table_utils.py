@@ -41,17 +41,18 @@ def is_seen_src_mac(src_mac: bytes(6)) -> bool:
 	return False
 
 def seen_src_mac_cnt() -> int:
-	return _seen_mac.len()
+	return len(_seen_mac)
 
 def add_seen_src_mac(src_mac: bytes(6), src_port: int):
-	if src_mac in _seen_mac:
-		_seen_mac.pop(_seen_mac.index(src_mac))
-	_seen_mac.insert(0, tuple(src_mac, src_port))
-	if _seen_mac.len() >= ENTRY_NUM:
+	for i, (seen_mac, seen_port) in enumerate(_seen_mac):
+		if src_mac == seen_mac:
+			_seen_mac.pop(i)
+	_seen_mac.insert(0, tuple((src_mac, src_port)))
+	if len(_seen_mac) >= ENTRY_NUM:
 		_seen_mac.pop()
-		assert(_seen_mac.len() <= ENTRY_NUM)
+		assert len(_seen_mac) <= ENTRY_NUM
 
 def random_seen_src_mac() -> tuple(bytes(6), int):
-	assert _seen_mac.len() > 0, f"Empty seen list"
-	assert _seen_mac.len() <= ENTRY_NUM, f"Unexpected seen list length, got {_seen_mac.len()}"
-	return _seen_mac[random.randrange(0,_seen_mac.len()]
+	assert len(_seen_mac) > 0, f"Empty seen list"
+	assert len(_seen_mac) <= ENTRY_NUM, f"Unexpected seen list length, got {len(_seen_mac)}"
+	return _seen_mac[random.randrange(0,len(_seen_mac))]
