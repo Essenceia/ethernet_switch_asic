@@ -6,44 +6,26 @@ sections.
 You can also include images in this folder and reference them in the markdown. Each image must be less than
 512 kb in size, and the combined size of all images must be less than 1 MB.
 -->
+3 port cut-through 100Mbps ethernet switch ASIC targetting the Global Foundary 180nm MCU node. 
 
-ASIC ethernet accelerator wrapper. 
+## Overview
 
-## How it works
+This is an simple 3-port unmanaged 100Mbps Ethernet Switch, just plug
+in the ethernet and let it route packets. Packets will be routed
+based on there mac addresses and the switch will keep track of 
+the addresses of the devices connected to each port by tracking the 
+`source address` field in the ethernet frame header of incomming ethernet packets.
 
-TODO
- 
-## How to test
+## Setup
 
-Connect the ethernet 100Mbps capable connector to the asic, if the connector doesn't 
-expose a `rx_err` signal clamp it to gnd. 
-Cable the ethernet connector to your local network, it doesn't have to be directly 
-to your computer so long your are in the same local network (layer2 packets can be routed
-within it). 
+Connect the 3 RMII PHY interfaces to RMII compliant PHY chips such as the LAN8720A, all 
+the PHYs and the ASIC should be using the same external 50MHz reference clock.
 
-Build the packet sender/receiver app in `tools`: 
-```
-cd tools
-make
-```
-
-To run pass the name of your ethernet interface currently connected to the same 
-LAN as the ASIC. Eg: I am connected though my wifi interface: 
-```
-sudo ./packet_sender wlp3s0
-```
-You can also observe the packets being sent back by sniffing your live traffic
-via tcpdump: 
-```
-sudo tcpdump -xx -e -v 'ether proto 0x88b5'
-```
-
-The ASIC will only respond to application packet (ethtype:`0x88b5`) requests sent to it, a packet must me sent 
-first to initiate a response. 
+A link to a test PCB design will be provided at a later date. 
 
 ## External hardware
 
-Ethernet 100BASE-T Pmod connector, featuring: 
-- LAN8720A PHY 
+Ethernet 100BASE-T Pmod connector: 
+- 3x100Mbps RMII compliant PHYs (LAN8720A)
 - 50MHz oscillator
 
