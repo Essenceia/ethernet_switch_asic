@@ -58,7 +58,7 @@ always @(posedge clk) begin
 	else begin
 		case(fsm_q) 
 			IDLE:    fsm_q <= wr_early_v_i ? WRITE : req_ttnn_update ? UPDATE : IDLE; 
-			WRITE:   fsm_q <= ~rd_v_i ? IDLE: WRITE; 
+			WRITE:   fsm_q <= ~rd_v_i ? (wr_early_v_i ? WRITE: IDLE) : WRITE; 
 			UPDATE:  fsm_q <= wr_early_v_i? WRITE : IDLE; 
 			default: fsm_q <= IDLE; 
 		endcase
