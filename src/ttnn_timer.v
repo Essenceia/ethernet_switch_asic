@@ -11,7 +11,9 @@ granted to use it to train any model.
 update has been finished.
 This timer was design for a target operating frequency of 50MHz and a timeout of ~300s.
  */
-module ttnn_timer (
+module ttnn_timer #(
+	parameter TTNN_W = 4
+)(
 	input wire clk, 
 	input wire rst_n, 
 	
@@ -25,7 +27,7 @@ localparam INNER_CNT_W = 2;
 localparam INNER_CNT_W = 13; 
 `endif
 
-localparam CNT_MAX_VAL = 224/16;
+localparam CNT_MAX_VAL = 224/(2 ** TTNN_W);
 localparam CNT_W = $clog2(CNT_MAX_VAL);
 /* verilator lint_off WIDTHTRUNC */
 localparam [CNT_W-1:0] CNT_MAX = CNT_MAX_VAL; 

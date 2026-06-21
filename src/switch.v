@@ -86,20 +86,28 @@ arbitor m_lookup_arbitor(
 	.req_mac_o(lookup_mac)
 );
 // write abritration
-wire                wr_early_v; 
-wire [MAC_W-1:0]    wr_mac;
-wire [PORT_CNT-1:0] wr_port;
 wire                wr_v_unused; 
+wire                wr_early_v_next; 
+wire [MAC_W-1:0]    wr_mac_next;
+wire [PORT_CNT-1:0] wr_port_next;
+reg                 wr_early_v_q;
+reg  [MAC_W-1:0]    wr_mac_q;
+reg  [PORT_CNT-1:0] wr_port_q;
 
 arbitor m_wr_arbitor(
 	.clk(clk),
 	.req_early_i({src_mac_v_next[2], src_mac_v_next[1],src_mac_v_next[0]}),
 	.req_mac_i({header_mac[2], header_mac[1], header_mac[0]}),
 	.req_v_o(wr_v_unused), 
-	.req_early_v_o(wr_early_v), 
-	.req_port_o(wr_port),
-	.req_mac_o(wr_mac)
+	.req_early_v_o(wr_early_v_next), 
+	.req_port_o(wr_port_next),
+	.req_mac_o(wr_mac_next)
 );
+always @(posedge clk) begin
+	wr_early_v_q <= wr_early_v_next; 
+	wr_port_q    <= wr_port_next;
+	wr_mac_q     <= wr_mac_next;
+end
 
 // lookup and dispatch 
 wire [PORT_CNT-1:0]              new_disp; 
@@ -112,11 +120,10 @@ lookup m_lookup(
 	.req_port_i(lookup_req_port),
 	.req_mac_i(lookup_mac), 
 
-	.wr_early_v_i(wr_early_v),
-	.wr_mac_i(wr_mac),
-	.wr_port_i(wr_port),
+	.wr_early_v_i(wr_early_v_q),
+	.wr_mac_i(wr_mac_q),
+	.wr_port_i(wr_port_q),
 	
-
 	.phy_tx_free_i(mac_tx_acc_i),
 	.new_dispatch_o(new_disp),
 	.dir_o(disp_dir)

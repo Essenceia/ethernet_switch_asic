@@ -66,7 +66,7 @@ always @(posedge clk) begin
 end
 
 // TTNN 
-ttnn_timer m_ttnn_timer(
+ttnn_timer #(.TTNN_W(TTNN_W)) m_ttnn_timer(
 	.clk(clk), 
 	.rst_n(rst_n), 
 	.update_finished_i(fsm_q == UPDATE),
