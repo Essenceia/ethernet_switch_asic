@@ -208,11 +208,13 @@ assign hit_port_o = port_hit_full;
 localparam N_IDX_W = $clog2(N+1);
 
 wire               cocotb_nobody_is_dead; 
+wire               cocotb_nobody_is_alive; 
 wire [N_IDX_W-1:0] cocotb_entry_alloc_cnt; 
 wire [MAC_W-1:0]   cocotb_entry_mac[N-1:0];
 wire [TTNN_W-1:0]  cocotb_entry_ttnn[N-1:0];
 
 assign cocotb_nobody_is_dead  = &alive_v;
+assign cocotb_nobody_is_alive = ~|alive_v;
 assign cocotb_entry_alloc_cnt = alive_v[3] + alive_v[2] + alive_v[1] + alive_v[0];
 assign cocotb_entry_mac       = mem_mac_q; 
 assign cocotb_entry_ttnn      = mem_ttnn_q; 

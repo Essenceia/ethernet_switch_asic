@@ -4,12 +4,15 @@
 # granted to use it to train any model.
 
 import random
+import cocotb
 
 # safe margin of timeout after which entries have expired
 ENTRY_EXPIERY_TIMEOUT = 4000 
 ENTRY_EXPIERY_TIMEOUT_SHORT = 2000 
 
 ENTRY_NUM = 4 
+
+TTNN_THRESHOLD = 3
 
 # generate random broadcast mac address for broadcast testing
 def random_broadcast_mac() -> bytes(6):
@@ -52,13 +55,33 @@ def add_seen_src_mac(src_mac: bytes(6), src_port: int):
 		_seen_mac.pop()
 		assert len(_seen_mac) <= ENTRY_NUM
 
-def random_seen_src_mac() -> tuple(bytes(6), int):
+def random_seen_src_mac(dut, gates : bool = True) -> tuple(bytes(6), int):
 	assert len(_seen_mac) > 0, f"Empty seen list"
 	assert len(_seen_mac) <= ENTRY_NUM, f"Unexpected seen list length, got {len(_seen_mac)}"
-	return _seen_mac[random.randrange(0,len(_seen_mac))]
+	while True:
+		mac, port = _seen_mac[random.randrange(0,len(_seen_mac))]
+		if not gates:
+			if _check_alive_margin(dut, mac):
+				break
+			elif _check_survivor(dut) == False:
+				assert 0, "Unexpected: everybody is dead" 
+		else: 
+			break
+	return mac, port
 
+def _check_survivor(dut) -> bool:
+	all_dead = dut.m_dut.m_switch.m_lookup.m_dispatcher.m_table.cocotb_nobody_is_alive.value 
+	return all_dead != 1
 
 def _check_alive_margin(dut, mac : bytes(6)) -> bool:
 	for i in range(0, ENTRY_NUM):
-		entry_mac =  dut.m_dut.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_mac(i).value 
-
+		entry_mac =  dut.m_dut.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_mac[i].value 
+		entry_mac_bytes = entry_mac.to_bytes( byteorder = 'big')
+		if entry_mac_bytes == mac: 
+			entry_ttnn =  dut.m_dut.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_ttnn[i].value 
+			if (entry_ttnn.to_unsigned() >= TTNN_THRESHOLD):
+				return True
+			else:
+				return False
+	assert 0, f"Failed to find entry for mac {mac}"
+			
