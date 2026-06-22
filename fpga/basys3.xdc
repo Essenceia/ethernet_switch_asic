@@ -28,10 +28,10 @@ set_property -dict { PACKAGE_PIN J1   IOSTANDARD LVCMOS33 } [get_ports {phy1_rx_
 set_property -dict { PACKAGE_PIN L2   IOSTANDARD LVCMOS33 } [get_ports {phy1_rx_i[1]}];
 set_property -dict { PACKAGE_PIN J2   IOSTANDARD LVCMOS33 } [get_ports {phy1_rx_v_i}];
 set_property -dict { PACKAGE_PIN G2   IOSTANDARD LVCMOS33 } [get_ports {phy1_rx_err_i}];
-set_property -dict { PACKAGE_PIN H1   IOSTANDARD LVCMOS33 LVCMOS33 DRIVE 16 SLEW FAST PULLDOWN true } [get_ports {phy1_tx_o[0]}];
-set_property -dict { PACKAGE_PIN K2   IOSTANDARD LVCMOS33 LVCMOS33 DRIVE 16 SLEW FAST PULLDOWN true } [get_ports {phy1_tx_o[1]}];
-set_property -dict { PACKAGE_PIN H2   IOSTANDARD LVCMOS33 LVCMOS33 DRIVE 16 SLEW FAST PULLDOWN true } [get_ports {phy1_tx_v_o}];
-set_property -dict { PACKAGE_PIN G3   IOSTANDARD LVCMOS33 PULLDOWN true } [get_ports {clk_phy_o}];
+set_property -dict { PACKAGE_PIN H1   IOSTANDARD LVCMOS33 DRIVE 16 SLEW FAST PULLDOWN true } [get_ports {phy1_tx_o[0]}];
+set_property -dict { PACKAGE_PIN K2   IOSTANDARD LVCMOS33 DRIVE 16 SLEW FAST PULLDOWN true } [get_ports {phy1_tx_o[1]}];
+set_property -dict { PACKAGE_PIN H2   IOSTANDARD LVCMOS33 DRIVE 16 SLEW FAST PULLDOWN true } [get_ports {phy1_tx_v_o}];
+set_property -dict { PACKAGE_PIN G3   IOSTANDARD LVCMOS33 PULLDOWN true } [get_ports {clk_phy1_i}];
 
 #Pmod Header JB
 #set_property -dict { PACKAGE_PIN A14   IOSTANDARD LVCMOS33 } [get_ports {phy_rx_io[0]}];
@@ -89,8 +89,8 @@ set_property CONFIG_MODE SPIx4 [current_design]
 # phy_clk
 set clk_phy0 "clk_phy0_i"
 create_clock -add -name $clk_phy0 -period 20.00 -waveform {0 10} [get_ports $clk_phy0]
-set phy1_clk "clk_phy1_i"
-create_clock -add -name $phy1_clk -period 20.00 -waveform {0 10} [get_ports $phy1_clk]
+set clk_phy1 "clk_phy1_i"
+create_clock -add -name $clk_phy1 -period 20.00 -waveform {0 10} [get_ports $clk_phy1]
 # pll clock creation infered by tools and pll params
 
 # mux paths 
@@ -129,13 +129,13 @@ set_input_delay -clock ${clk_phy1} -min ${tohold} $::env(PHY_RX1_PINS)
 set tsu 4
 set tihold -1.5
 # TX0
-set_output_delay -clock $dephase_phy0_tx_clk0 -max ${tsu} $::env(PHY_TX0_PINS)
-set_output_delay -clock $dephase_phy0_tx_clk0 -min ${tihold} $::env(PHY_TX0_PINS)
-set_output_delay -clock $dephase_phy0_tx_clk1 -max ${tsu} $::env(PHY_TX0_PINS) -add_delay
-set_output_delay -clock $dephase_phy0_tx_clk1 -min ${tihold} $::env(PHY_TX0_PINS) -add_delay
+set_output_delay -clock $dephase_phy0_tx_clk_0 -max ${tsu} $::env(PHY_TX0_PINS)
+set_output_delay -clock $dephase_phy0_tx_clk_0 -min ${tihold} $::env(PHY_TX0_PINS)
+set_output_delay -clock $dephase_phy0_tx_clk_1 -max ${tsu} $::env(PHY_TX0_PINS) -add_delay
+set_output_delay -clock $dephase_phy0_tx_clk_1 -min ${tihold} $::env(PHY_TX0_PINS) -add_delay
 # TX1
-set_output_delay -clock $dephase_phy1_tx_clk0 -max ${tsu} $::env(PHY_TX1_PINS)
-set_output_delay -clock $dephase_phy1_tx_clk0 -min ${tihold} $::env(PHY_TX1_PINS)
-set_output_delay -clock $dephase_phy1_tx_clk1 -max ${tsu} $::env(PHY_TX1_PINS) -add_delay
-set_output_delay -clock $dephase_phy1_tx_clk1 -min ${tihold} $::env(PHY_TX1_PINS) -add_delay
+set_output_delay -clock $dephase_phy1_tx_clk_0 -max ${tsu} $::env(PHY_TX1_PINS)
+set_output_delay -clock $dephase_phy1_tx_clk_0 -min ${tihold} $::env(PHY_TX1_PINS)
+set_output_delay -clock $dephase_phy1_tx_clk_1 -max ${tsu} $::env(PHY_TX1_PINS) -add_delay
+set_output_delay -clock $dephase_phy1_tx_clk_1 -min ${tihold} $::env(PHY_TX1_PINS) -add_delay
 
