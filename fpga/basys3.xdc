@@ -24,14 +24,14 @@ set_property -dict { PACKAGE_PIN P1    IOSTANDARD LVCMOS33 PULLDOWN true } [get_
 set_property -dict { PACKAGE_PIN L1    IOSTANDARD LVCMOS33 PULLDOWN true } [get_ports {led_o[15]}]
 
 #Pmod Header JA
-#set_property -dict { PACKAGE_PIN J1   IOSTANDARD LVCMOS33 } [get_ports {phy_tx_o[0]}];
-#set_property -dict { PACKAGE_PIN L2   IOSTANDARD LVCMOS33 } [get_ports {phy_tx_o[1]}];
-#set_property -dict { PACKAGE_PIN J2   IOSTANDARD LVCMOS33 } [get_ports {phy_tx_v_o}];
-# set_property -dict { PACKAGE_PIN G2   IOSTANDARD LVCMOS33 } [get_ports {res_o[3]}];
-# set_property -dict { PACKAGE_PIN H1   IOSTANDARD LVCMOS33 } [get_ports {res_o[4]}];
-# set_property -dict { PACKAGE_PIN K2   IOSTANDARD LVCMOS33 } [get_ports {res_o[5]}];
-# set_property -dict { PACKAGE_PIN H2   IOSTANDARD LVCMOS33 } [get_ports {res_o[6]}];
-#set_property -dict { PACKAGE_PIN G3   IOSTANDARD LVCMOS33 } [get_ports {clk_phy_o}];
+set_property -dict { PACKAGE_PIN J1   IOSTANDARD LVCMOS33 } [get_ports {phy1_rx_i[0]}];
+set_property -dict { PACKAGE_PIN L2   IOSTANDARD LVCMOS33 } [get_ports {phy1_rx_i[1]}];
+set_property -dict { PACKAGE_PIN J2   IOSTANDARD LVCMOS33 } [get_ports {phy1_rx_v_i}];
+set_property -dict { PACKAGE_PIN G2   IOSTANDARD LVCMOS33 } [get_ports {phy1_rx_err_i}];
+set_property -dict { PACKAGE_PIN H1   IOSTANDARD LVCMOS33 LVCMOS33 DRIVE 16 SLEW FAST PULLDOWN true } [get_ports {phy1_tx_o[0]}];
+set_property -dict { PACKAGE_PIN K2   IOSTANDARD LVCMOS33 LVCMOS33 DRIVE 16 SLEW FAST PULLDOWN true } [get_ports {phy1_tx_o[1]}];
+set_property -dict { PACKAGE_PIN H2   IOSTANDARD LVCMOS33 LVCMOS33 DRIVE 16 SLEW FAST PULLDOWN true } [get_ports {phy1_tx_v_o}];
+set_property -dict { PACKAGE_PIN G3   IOSTANDARD LVCMOS33 PULLDOWN true } [get_ports {clk_phy_o}];
 
 #Pmod Header JB
 #set_property -dict { PACKAGE_PIN A14   IOSTANDARD LVCMOS33 } [get_ports {phy_rx_io[0]}];
@@ -44,14 +44,14 @@ set_property -dict { PACKAGE_PIN L1    IOSTANDARD LVCMOS33 PULLDOWN true } [get_
 #set_property -dict { PACKAGE_PIN C16   IOSTANDARD LVCMOS33 } [get_ports {phy_rst_n_o}];
 
 # Pmod Header JC
-set_property -dict { PACKAGE_PIN K17   IOSTANDARD LVCMOS33 } [get_ports {phy_rx_i[0]}];
-set_property -dict { PACKAGE_PIN M18   IOSTANDARD LVCMOS33 } [get_ports {phy_rx_i[1]}];
-set_property -dict { PACKAGE_PIN N17   IOSTANDARD LVCMOS33 } [get_ports {phy_rx_v_i}];
-set_property -dict { PACKAGE_PIN P18   IOSTANDARD LVCMOS33 } [get_ports {phy_rx_err_i}];
-set_property -dict { PACKAGE_PIN L17   IOSTANDARD LVCMOS33 PULLDOWN true } [get_ports {clk_phy_i}];
-set_property -dict { PACKAGE_PIN M19   IOSTANDARD LVCMOS33 DRIVE 16 SLEW FAST PULLDOWN true } [get_ports {phy_tx_o[0]}];
-set_property -dict { PACKAGE_PIN P17   IOSTANDARD LVCMOS33 DRIVE 16 SLEW FAST PULLDOWN true } [get_ports {phy_tx_o[1]}];
-set_property -dict { PACKAGE_PIN R18   IOSTANDARD LVCMOS33 DRIVE 16 SLEW FAST PULLDOWN true } [get_ports {phy_tx_v_o}];
+set_property -dict { PACKAGE_PIN K17   IOSTANDARD LVCMOS33 } [get_ports {phy0_rx_i[0]}];
+set_property -dict { PACKAGE_PIN M18   IOSTANDARD LVCMOS33 } [get_ports {phy0_rx_i[1]}];
+set_property -dict { PACKAGE_PIN N17   IOSTANDARD LVCMOS33 } [get_ports {phy0_rx_v_i}];
+set_property -dict { PACKAGE_PIN P18   IOSTANDARD LVCMOS33 } [get_ports {phy0_rx_err_i}];
+set_property -dict { PACKAGE_PIN L17   IOSTANDARD LVCMOS33 PULLDOWN true } [get_ports {clk_phy0_i}];
+set_property -dict { PACKAGE_PIN M19   IOSTANDARD LVCMOS33 DRIVE 16 SLEW FAST PULLDOWN true } [get_ports {phy0_tx_o[0]}];
+set_property -dict { PACKAGE_PIN P17   IOSTANDARD LVCMOS33 DRIVE 16 SLEW FAST PULLDOWN true } [get_ports {phy0_tx_o[1]}];
+set_property -dict { PACKAGE_PIN R18   IOSTANDARD LVCMOS33 DRIVE 16 SLEW FAST PULLDOWN true } [get_ports {phy0_tx_v_o}];
 
 #Pmod Header JXADC
 #set_property -dict { PACKAGE_PIN J3   IOSTANDARD LVCMOS33 } [get_ports {JXADC_o[0]}];#Sch name = XA1_P
@@ -87,33 +87,55 @@ set_property BITSTREAM.CONFIG.CONFIGRATE 33 [current_design]
 set_property CONFIG_MODE SPIx4 [current_design]
 
 # phy_clk
-set ref_clk "clk_phy_i"
-create_clock -add -name $ref_clk -period 20.00 -waveform {0 10} [get_ports $ref_clk]
+set clk_phy0 "clk_phy0_i"
+create_clock -add -name $clk_phy0 -period 20.00 -waveform {0 10} [get_ports $clk_phy0]
+set phy1_clk "clk_phy1_i"
+create_clock -add -name $phy1_clk -period 20.00 -waveform {0 10} [get_ports $phy1_clk]
 # pll clock creation infered by tools and pll params
 
-# tx phase select clk
-set dephase_clk "dephase_clk"
-# inverted clk
-#set ref_clk_inv_net [get_nets -hire -regexp ".*m_tx_delay.*ref_clk_inv"]
-#create_generated_clock -name ref_clk_inv -source [get_ports $ref_clk] -divide_by 1 -invert  $ref_clk_inv_net
-
 # mux paths 
-set dephase_clk_net [get_nets -hier -regexp ".*/inner_clk" ]
-set dephase_clk_0 "dephase_clk_0"
-set dephase_clk_1 "dephase_clk_1"
-create_generated_clock -name $dephase_clk_0 -source [get_ports $ref_clk] -master_clock $ref_clk -divide_by 1 $dephase_clk_net -add
-create_generated_clock -name $dephase_clk_1 -source [get_ports $ref_clk] -master_clock $ref_clk -divide_by 1 -invert $dephase_clk_net -add 
-set_clock_groups -logically_exclusive -group $dephase_clk_0 -group $dephase_clk_1
+# TX0 
+set dephase_phy0_tx_clk_net [get_nets -hier -regexp ".*g_channel.0.*/inner_clk" ]
+set dephase_phy0_tx_clk_0 "dephase_phy0_tx_clk_0"
+set dephase_phy0_tx_clk_1 "dephase_phy0_tx_clk_1"
+create_generated_clock -name $dephase_phy0_tx_clk_0 -source [get_ports $clk_phy0] -master_clock $clk_phy0 -divide_by 1 $dephase_phy0_tx_clk_net -add
+create_generated_clock -name $dephase_phy0_tx_clk_1 -source [get_ports $clk_phy0] -master_clock $clk_phy0 -divide_by 1 -invert $dephase_phy0_tx_clk_net -add 
+set_clock_groups -logically_exclusive -group $dephase_phy0_tx_clk_0 -group $dephase_phy0_tx_clk_1
  
- 
-#set dephase_clk_net [get_nets -hier -regexp ".*/inner_clk" ]
-#create_generated_clock -name $dephase_clk -source [get_ports $ref_clk] -divide_by 1 -invert $dephase_clk_net
+#TX1
+set dephase_phy1_tx_clk_net [get_nets -hier -regexp ".*g_channel.1.*/inner_clk" ]
+set dephase_phy1_tx_clk_0 "dephase_phy1_tx_clk_0"
+set dephase_phy1_tx_clk_1 "dephase_phy1_tx_clk_1"
+create_generated_clock -name $dephase_phy1_tx_clk_0 -source [get_ports $clk_phy1] -master_clock $clk_phy1 -divide_by 1 $dephase_phy1_tx_clk_net -add
+create_generated_clock -name $dephase_phy1_tx_clk_1 -source [get_ports $clk_phy1] -master_clock $clk_phy1 -divide_by 1 -invert $dephase_phy1_tx_clk_net -add 
+set_clock_groups -logically_exclusive -group $dephase_phy1_tx_clk_0 -group $dephase_phy1_tx_clk_1
 
 # lan8720a configs
-set ::env(PHY_RX_PINS) [get_ports -regexp phy_rx.*]
-set ::env(PHY_TX_PINS) [get_ports -regexp phy_tx.*]
-set ::env(CLOCK_PORT) $ref_clk
-set ::env(OUTPUT_CLOCK_0) $dephase_clk_0
-set ::env(OUTPUT_CLOCK_1) $dephase_clk_1
+set ::env(PHY_RX0_PINS) [get_ports -regexp phy0_rx.*]
+set ::env(PHY_RX1_PINS) [get_ports -regexp phy1_rx.*]
+set ::env(PHY_TX0_PINS) [get_ports -regexp phy0_tx.*]
+set ::env(PHY_TX1_PINS) [get_ports -regexp phy1_tx.*]
 
+
+set toval 14
+set tohold 3
+# RX0
+set_input_delay -clock ${clk_phy0} -max ${toval} $::env(PHY_RX0_PINS)
+set_input_delay -clock ${clk_phy0} -min ${tohold} $::env(PHY_RX0_PINS) 
+# RX1
+set_input_delay -clock ${clk_phy1} -max ${toval} $::env(PHY_RX1_PINS)
+set_input_delay -clock ${clk_phy1} -min ${tohold} $::env(PHY_RX1_PINS) 
+
+set tsu 4
+set tihold -1.5
+# TX0
+set_output_delay -clock $dephase_phy0_tx_clk0 -max ${tsu} $::env(PHY_TX0_PINS)
+set_output_delay -clock $dephase_phy0_tx_clk0 -min ${tihold} $::env(PHY_TX0_PINS)
+set_output_delay -clock $dephase_phy0_tx_clk1 -max ${tsu} $::env(PHY_TX0_PINS) -add_delay
+set_output_delay -clock $dephase_phy0_tx_clk1 -min ${tihold} $::env(PHY_TX0_PINS) -add_delay
+# TX1
+set_output_delay -clock $dephase_phy1_tx_clk0 -max ${tsu} $::env(PHY_TX1_PINS)
+set_output_delay -clock $dephase_phy1_tx_clk0 -min ${tihold} $::env(PHY_TX1_PINS)
+set_output_delay -clock $dephase_phy1_tx_clk1 -max ${tsu} $::env(PHY_TX1_PINS) -add_delay
+set_output_delay -clock $dephase_phy1_tx_clk1 -min ${tihold} $::env(PHY_TX1_PINS) -add_delay
 

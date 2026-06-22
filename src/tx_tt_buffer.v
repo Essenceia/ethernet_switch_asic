@@ -30,11 +30,11 @@ module tx_tt_buffer(
 );
 wire      ref_clk_inv; 
  
-wire      inner_clk; 
+(* keep *)wire inner_clk; 
+
 reg       tx_v_q; 
 reg [1:0] tx_q;
 reg       clk_phase_sel_q;
-
 
 always @(posedge ref_clk) 
 	if (~rst_n)clk_phase_sel_q <= clk_phase_sel_i;
@@ -57,28 +57,9 @@ assign ref_clk_inv = ~ref_clk;
 assign inner_clk = clk_phase_sel_q ? ref_clk_inv: ref_clk; 
 `endif
 
-
-`ifdef SCL_gf180mcu_fd_sc_mcu7t5v0
-wire       tx_v_buff;
-wire [1:0] tx_buff;
-
-assign tx_v_buff = tx_v_i;
-assign tx_buff = tx_i;
-`else
-(* DONT_TOUCH = "yes" *)
-wire       tx_v_buff;
-(* DONT_TOUCH = "yes" *)
-wire [1:0] tx_buff;
-
-// shooting design opt a bit until it stops being too good at creating
-// hold violations
-assign tx_v_buff = ~(~tx_v_i);
-assign tx_buff   = ~(~tx_i); 
-`endif
-
 always @(posedge inner_clk) begin
-	tx_v_q <= tx_v_buff; 
-	tx_q   <= tx_buff; 
+	tx_v_q <= tx_v_i; 
+	tx_q   <= tx_i; 
 end
 
 assign tx_v_o = tx_v_q; 
