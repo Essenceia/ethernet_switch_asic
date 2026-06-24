@@ -40,7 +40,6 @@
   "RUN_POST_GRT_RESIZER_TIMING" : "True", 
   
   "SYNTH_AUTONAME": "True",
-  "SYNTH_HIERARCHY": "keep",
  
   "RUN_POST_GRT_DESIGN_REPAIR": "True", 
   "RUN_POST_GPL_DESIGN_REPAIR": "True",
