@@ -177,31 +177,6 @@ always @(*) begin
 	endcase
 end
 
-/*
-(* dont_touch , keep *)wire [N-1:0] debug_mac_hit;  
-(* dont_touch , keep *)wire         debug_hit_v_o;  
-(* dont_touch , keep *)wire [N-1:0] debug_entry_alive;  
-(* dont_touch , keep *)wire [PORT_CNT-1:0]   debug_port_hit_full;
-(* dont_touch , keep *)wire [PORT_IDX_W-1:0] debug_port_hit_idx;
-(* dont_touch , keep *)wire [N-1:0]          debug_mac_hit_lite;  
-(* dont_touch , keep *)wire                  debug_rd_v;
-(* dont_touch , keep *)wire                  debug_wr_v;
-(* dont_touch , keep *)wire [PORT_IDX_W-1:0] debug_wr_port_idx;
-(* dont_touch , keep *)wire [PORT_CNT-1:0]   debug_wr_port;
-assign debug_mac_hit = mac_hit; 
-assign debug_entry_alive = alive_v;
-assign debug_rd_v = rd_v_i;
-assign debug_hit_v_o = hit_v_o;
-
-assign debug_port_hit_full = port_hit_full;
-assign debug_port_hit_idx = port_hit;
-assign debug_mac_hit_lite = mac_hit_lite; 
-
-assign debug_wr_v = wr_v & |wr_sel; 
-assign debug_wr_port_idx = wr_port_idx;
-assign debug_wr_port     = wr_port_i;
-*/
-
 assign hit_v_o    = |mac_hit; // will be masked in dispatch on req
 assign hit_port_o = port_hit_full; 
 
