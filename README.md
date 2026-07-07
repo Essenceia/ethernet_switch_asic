@@ -1,22 +1,36 @@
 # 100Mbps Ethernet Switch ASIC
 
-Fully open source 3 port cut-through unmanaged 100Mbps ethernet switch ASIC targetting the Global Foundary 180nm MCU node. 
+Fully open source 3 port cut-through unmanaged 100Mbps ethernet switch ASIC targeting the [Global Foundry 180nm MCU node (gf180mcuD)](https://gf180mcu-pdk.readthedocs.io/en/latest/). 
+
+The first version of this chip is currently tapped out on the [Tiny Tapeout gf26b shuttle chip](https://tinytapeout.com/chips/ttgf26b/), part of the second [wafer.space](https://wafer.space/) run, and silicon bring-up is expected to start 2026-11-15. 
 
 ![feature](/docs/feature.png) 
 
-This unmanaged switch is equiped with a small internal mac address table to keep track of which devices
-are connected downstream of each of it's ports. During operations it will autonomously update this internal 
-table based on the source mac addresses of incomming packets. When packets addresses to a know entry 
-are received they are routed only to the port associated with this entry. If a packet is targetting an 
-unknown destination mac address or a broadcast address the packet is broadcasted on all ports appart 
-from the port it is comming from. 
+Features: 
+- 3x Full duplex Ethernet ports, 100Mbps over RMII 
+- Unmanaged switch 
+- Cut-though forwarding 
 
-## Improvements 
+## Overview 
 
-List of potenciel future improvements :
+This ASIC will behave like any other unmanaged cut-though Ethernet switch, using it on a network should be as simple as connecting it and forgetting it. No additional setup is required. 
+
+This unmanaged switch is equipped with a small internal mac address table to keep track of which devices
+are connected downstream of each of its ports. During operations it will autonomously update this internal 
+table based on the source mac addresses of incoming packets. When packets addressed to a known entry are received, they are routed only to the port associated with this entry. If a packet is targeting an unknown destination mac address or a broadcast address the packet is broadcasted on all ports apart 
+from the port it is coming from. 
+
+## Future Improvements 
+
+The 3 port limitation is imposed by the limited available pins available to the Tiny Tapeout shuttle tiles. Eventually, after the silicon has been proven the plan is to move to a full chip design and expand the switch to an 8 port design. 
+
+
+List of other future improvements :
 - 10Mbps support with dynamic switching between 100Mbps and 10Mbps
 - Add perf counters and expose said counters over JTAG 
-- Add analog content addressable memory for address table
+- Expand the number of routing entries:
+	- Add more pure digital entires 
+- Add analog CAM (content addressable memory) for the address resolution table
 
 ## Credits
 
@@ -32,3 +46,5 @@ otherwise specified.
 Any submission of this design, or derivatives thereof, made through the Tiny Tapeout 
 shuttle program is additionally licensed under the Apache License 2.0 and is exempt from the 
 reciprocal requirements of CERN-OHL-S-2.0 solely for that purpose.
+
+
