@@ -30,7 +30,7 @@ List of other future improvements :
 - Add perf counters and expose said counters over JTAG 
 - Expand the number of routing entries:
 	- Add more pure digital entires 
-- Add analog CAM (content addressable memory) for the address resolution table
+	- Move to using an analog CAM (content addressable memory) for the address resolution table
 
 ## Coffee-shop Chip family 
 
