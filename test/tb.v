@@ -88,45 +88,4 @@ module tb ();
 	);
 
 
-`ifndef GL_TEST
-/* mac address table for increasing tech coverage */
-localparam MAC_W = 48;
-localparam PORT_CNT = 3;
-localparam N = 4; 
-
-wire               rd_early_v;
-wire [MAC_W-1:0]   rd_early_mac;
-reg                _rd_v_q;
-reg  [MAC_W-1:0]   _rd_mac_q;
-
-wire                wr_early_v; 
-wire [MAC_W-1:0]    wr_early_mac; 
-wire [PORT_CNT-1:0] wr_early_port;
-reg  [MAC_W-1:0]    _wr_mac_q; 
-reg  [PORT_CNT-1:0] _wr_port_q;
-
-wire                hit; 
-wire [PORT_CNT-1:0] hit_port;
-
-always @(posedge clk) begin
-	_rd_v_q    <= rd_early_v;
-	_rd_mac_q  <= rd_early_mac;
-	_wr_mac_q  <= wr_early_mac;
-	_wr_port_q <= wr_early_port;
-end
-
-mac_addr_table #(.N(N), .MAC_W(MAC_W), .PORT_CNT(PORT_CNT)) m_table( 
-	.clk(clk),
-	.rst_n(rst_n), 
-	.rd_v_i(_rd_v_q),
-	.rd_early_v_i(rd_early_v),
-	.rd_mac_i(_rd_mac_q),
-	.wr_early_v_i(wr_early_v),
-	.wr_mac_i(_wr_mac_q),
-	.wr_port_i(_wr_port_q),
-	.hit_v_o(hit),
-	.hit_port_o(hit_port)
-);
-`endif
-
 endmodule
