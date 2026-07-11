@@ -92,7 +92,6 @@ wire         wr_mac_group;
 
 genvar i; 
 
-// TODO replacement policy and look for collisions 
 assign wr_mac_group = wr_mac_i[MAC_GROUP_IDX]; // don't write group addresses, should be broadcasted
 assign wr_sel = mac_hit // collison, overwrite entry 
 			   | ({N{~|mac_hit}} & victime_q);
