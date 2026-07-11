@@ -71,7 +71,7 @@ assign uio_out[5] = phy_tx[2*PHY_W+0];
 assign uio_out[6] = phy_tx[2*PHY_W+1];
 assign uio_out[7] = phy_tx_v[2];
 
-coffeeport #(.PORT_CNT(PORT_CNT), .PHY_W(PHY_W), .HAS_TX_PHASE(1'b1)) m_coffeepot(
+coffeepot #(.PORT_CNT(PORT_CNT), .PHY_W(PHY_W), .HAS_TX_PHASE(1'b1)) m_coffeepot(
 .clk(clk), 
 .rst_n(rst_n),
 
@@ -79,10 +79,10 @@ coffeeport #(.PORT_CNT(PORT_CNT), .PHY_W(PHY_W), .HAS_TX_PHASE(1'b1)) m_coffeepo
 
 .phy_rx_v_i(phy_rx_v),
 .phy_rx_err_i(phy_rx_err),
-.phy_rx_data_i(phy_rx),
+.phy_rx_i(phy_rx),
 
 .phy_tx_v_o(phy_tx_v),
-.phy_tx_data_o(phy_tx)
+.phy_tx_o(phy_tx)
 ); 
 
 endmodule

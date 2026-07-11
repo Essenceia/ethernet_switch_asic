@@ -19,10 +19,10 @@ module coffeepot #(
 	
 	input  wire [PORT_CNT-1:0]       phy_rx_v_i,    
 	input  wire [PORT_CNT-1:0]       phy_rx_err_i,    
-	input  wire [PORT_CNT*PHY_W-1:0] phy_rx_data_i,   
+	input  wire [PORT_CNT*PHY_W-1:0] phy_rx_i, // data   
 
 	output wire [PORT_CNT-1:0]       phy_tx_v_o,    
-	output wire [PORT_CNT*PHY_W-1:0] phy_tx_data_o 
+	output wire [PORT_CNT*PHY_W-1:0] phy_tx_o // data
 );
 
 // rst flop
