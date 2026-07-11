@@ -35,8 +35,8 @@ wire tx_phase;
 assign tx_phase = uio_in[4];
 
 // rx to top
-wire                      phy_rx_v[PORT_CNT-1:0];
-wire                      phy_rx_err[PORT_CNT-1:0];
+wire [PORT_CNT-1:0]       phy_rx_v;
+wire [PORT_CNT-1:0]       phy_rx_err;
 wire [PORT_CNT*PHY_W-1:0] phy_rx;
 
 // RX0
@@ -56,7 +56,7 @@ assign phy_rx_v[2]        = uio_in[2];
 assign phy_rx_err[2]      = uio_in[3];  
 
 // top to tx
-wire                      phy_tx_v[PORT_CNT-1:0];
+wire [PORT_CNT-1:0]       phy_tx_v;
 wire [PORT_CNT*PHY_W-1:0] phy_tx;
 // TX0 
 assign uo_out[0] = phy_tx[0*PHY_W+0];
@@ -71,7 +71,7 @@ assign uio_out[5] = phy_tx[2*PHY_W+0];
 assign uio_out[6] = phy_tx[2*PHY_W+1];
 assign uio_out[7] = phy_tx_v[2];
 
-coffeepot #(.PORT_CNT(PORT_CNT), .PHY_W(PHY_W), .HAS_TX_PHASE(1'b1)) m_coffeepot(
+coffeepot #(.PORT_CNT(PORT_CNT), .PHY_W(PHY_W), .HAS_TX_PHASE(1)) m_coffeepot(
 .clk(clk), 
 .rst_n(rst_n),
 

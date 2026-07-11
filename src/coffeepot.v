@@ -10,7 +10,7 @@ granted to use it to train any model.
 module coffeepot #(
 	parameter PORT_CNT = 3,
 	parameter PHY_W = 2,
-	parameter HAS_TX_PHASE = 0
+	parameter HAS_TX_PHASE = 1
 )(
     input  wire       clk,      
     input  wire       rst_n,
@@ -30,23 +30,23 @@ reg rst_n_q;
 always @(posedge clk) 
 	rst_n_q <= rst_n; 
 
+wire [PORT_CNT-1:0] phy_rx_v;
+wire [PORT_CNT-1:0] phy_rx_err;
+wire [PHY_W-1:0]    phy_rx[PORT_CNT-1:0];
+
+wire [PORT_CNT-1:0] phy_tx_v;
+wire [PHY_W-1:0]    phy_tx[PORT_CNT-1:0];
+
 // rx to mac rx
 wire             rmii_rx_v[PORT_CNT-1:0];
 wire             rmii_rx_err[PORT_CNT-1:0];
 wire [PHY_W-1:0] rmii_rx[PORT_CNT-1:0];
-
-wire             phy_rx_v[PORT_CNT-1:0];
-wire             phy_rx_err[PORT_CNT-1:0];
-wire [PHY_W-1:0] phy_rx[PORT_CNT-1:0];
 
 wire             mac_rx_v[PORT_CNT-1:0];
 wire [PHY_W-1:0] mac_rx[PORT_CNT-1:0];
 // lookup to tx
 wire             rmii_tx_v[PORT_CNT-1:0];
 wire [PHY_W-1:0] rmii_tx[PORT_CNT-1:0];
-
-wire             phy_tx_v[PORT_CNT-1:0];
-wire [PHY_W-1:0] phy_tx[PORT_CNT-1:0];
 
 // switch <-> mac tx
 wire             mac_tx_v[PORT_CNT-1:0];
