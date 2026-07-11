@@ -45,7 +45,7 @@ def is_seen_src_mac(src_mac: bytes(6)) -> bool:
 
 def seen_src_mac_cnt(dut, gates: str = "yes" ) -> int:
 	if gates == "":
-		alive_cnt = dut.m_dut.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_alloc_cnt.value 
+		alive_cnt = dut.m_dut.m_coffeepot.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_alloc_cnt.value 
 		return alive_cnt.to_unsigned() 
 	else:
 		return len(_seen_mac)
@@ -74,15 +74,15 @@ def random_seen_src_mac(dut, gates: str = "yes") -> tuple[bytes(6), int]:
 	return mac, port
 
 def _check_survivor(dut) -> bool:
-	all_dead = dut.m_dut.m_switch.m_lookup.m_dispatcher.m_table.cocotb_nobody_is_alive.value 
+	all_dead = dut.m_dut.m_coffeepot.m_switch.m_lookup.m_dispatcher.m_table.cocotb_nobody_is_alive.value 
 	return all_dead != 1
 
 def _check_alive_margin(dut, mac : bytes(6)) -> bool:
 	for i in range(0, ENTRY_NUM):
-		entry_mac =  dut.m_dut.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_mac[i].value 
+		entry_mac =  dut.m_dut.m_coffeepot.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_mac[i].value 
 		entry_mac_bytes = entry_mac.to_bytes( byteorder = 'big')
 		if entry_mac_bytes == mac: 
-			entry_ttnn =  dut.m_dut.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_ttnn[i].value 
+			entry_ttnn =  dut.m_dut.m_coffeepot.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_ttnn[i].value 
 			if (entry_ttnn.to_unsigned() >= TTNN_THRESHOLD):
 				return True
 			else:
