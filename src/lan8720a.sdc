@@ -2,16 +2,14 @@
 # timing signal names will be following the LAN8720A datasheet naming, and so will be 
 # expressed from the perspective of the PHY chip and not the ASIC 
 
-set ref_clk [get_clocks $::env(CLOCK_PORT)] 
-
 # output direction (input to the ASIC) RXD[1:0], RXER, CRS_DV (RXV)
 # valid from rising edge of refclk
 set toval 14
 # hold from rising edge of refclk
 set tohold 3
 
-set_input_delay -clock ${ref_clk} -max ${toval} $::env(PHY_RX_PINS)
-set_input_delay -clock ${ref_clk} -min ${tohold} $::env(PHY_RX_PINS) 
+set_input_delay -clock $::env(INPUT_PHY_CLK) -max ${toval} $::env(PHY_RX_PINS)
+set_input_delay -clock $::env(INPUT_PHY_CLK) -min ${tohold} $::env(PHY_RX_PINS) 
 
 # input direction (output from the ASIC) TXD[1:0] TXEN (TXV)  
 # setup time to rising edge for the refclk
