@@ -17,7 +17,8 @@ set_input_delay -clock ${ref_clk} -min ${tohold} $::env(PHY_RX_PINS)
 # setup time to rising edge for the refclk
 set tsu 4
 # input hold time after rising edge of refclk
-set tihold -1.5
+# updated for RMII compliance
+set tihold -2.0 
 
 set_output_delay -clock $::env(OUTPUT_CLOCK_TX0) -max ${tsu} $::env(PHY_TX0_PINS)
 set_output_delay -clock $::env(OUTPUT_CLOCK_TX0) -min ${tihold} $::env(PHY_TX0_PINS)

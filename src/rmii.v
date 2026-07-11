@@ -42,7 +42,7 @@ always @(posedge clk) begin
 end
 
 generate 
-if (HAS_TX_PHASE == 1) begin
+if (HAS_TX_PHASE == 1) begin: g_tx_phase
 tx_tt_buffer m_tx_delay(
 	.ref_clk(clk),
 	.rst_n(rst_n), 
@@ -55,7 +55,7 @@ tx_tt_buffer m_tx_delay(
 	.tx_v_o(phy_tx_v_o),
 	.tx_o(phy_tx_o)
 ); 
-end else begin
+end else begin : g_no_tx_phase
 reg       phy_tx_v_q;
 reg [1:0] phy_tx_q;
 
