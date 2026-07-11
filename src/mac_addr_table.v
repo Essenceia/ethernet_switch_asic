@@ -34,13 +34,12 @@ MAC  mac address
 PORT compressed port index 
 TTNN time to num num (ageing mechanism) 
 */
-localparam PORT_IDX_W    = $clog2(PORT_CNT);
 localparam TTNN_W        = 4;
 localparam MAC_GROUP_IDX = 40; 
  
 // TODO : analog CAM
 reg [MAC_W-1:0]      mem_mac_q[N-1:0];
-reg [PORT_IDX_W-1:0] mem_port_q[N-1:0];
+reg [PORT_CNT-1:0]   mem_port_q[N-1:0];
 reg [TTNN_W-1:0]     mem_ttnn_q[N-1:0];
 
 /* memory fsm : coordinate read/writes, trigger regular ttnn updates */
@@ -96,20 +95,6 @@ assign wr_mac_group = wr_mac_i[MAC_GROUP_IDX]; // don't write group addresses, s
 assign wr_sel = mac_hit // collison, overwrite entry 
 			   | ({N{~|mac_hit}} & victime_q);
 
-// compress port onehot to idx
-reg [PORT_IDX_W-1:0] wr_port_idx; 
-always @(*) begin
-	/* verilator lint_off CASEOVERLAP */
-	(* parallel_case *)
-	casez(wr_port_i)
-		3'b??1: wr_port_idx = 2'd0;
-		3'b?1?: wr_port_idx = 2'd1;
-		3'b1??: wr_port_idx = 2'd2;
-		default:wr_port_idx = {PORT_IDX_W{1'bx}};
-	endcase
-	/* verilator lint_on CASEOVERLAP */
-end
-
 // write
 assign wr_v = (fsm_q == WRITE) & ~rd_v_i & ~wr_mac_group; 
 generate
@@ -123,13 +108,13 @@ generate
 		always @(posedge clk) begin
 			if (wr_v & wr_sel[i]) begin
 				mem_mac_q[i]  <= wr_mac_i;
-				mem_port_q[i] <= wr_port_idx;
+				mem_port_q[i] <= wr_port_i;
 			end
 		end
 		// debug
-		wire [MAC_W-1:0]      debug_mem_mac; 
-		wire [PORT_IDX_W-1:0] debug_mem_port;
-		wire [TTNN_W-1:0]     debug_mem_ttnn;
+		wire [MAC_W-1:0]    debug_mem_mac; 
+		wire [PORT_CNT-1:0] debug_mem_port;
+		wire [TTNN_W-1:0]   debug_mem_ttnn;
 		assign debug_mem_mac  = mem_mac_q[i];
 		assign debug_mem_port = mem_port_q[i];
 		assign debug_mem_ttnn = mem_ttnn_q[i];
@@ -152,7 +137,7 @@ generate
 	end
 endgenerate 
 
-reg [PORT_IDX_W-1:0] port_hit; 
+reg [PORT_CNT-1:0] port_hit; 
 always @(*) begin
 	/* verilator lint_off CASEOVERLAP */
 	(* parallel_case *)
@@ -161,23 +146,13 @@ always @(*) begin
 		4'b??1?: port_hit = mem_port_q[1];
 		4'b?1??: port_hit = mem_port_q[2];
 		4'b1???: port_hit = mem_port_q[3];
-		default: port_hit = {PORT_IDX_W{1'bX}};
+		default: port_hit = {PORT_CNT{1'bX}};
 	endcase
 	/* verilator lint_on CASEOVERLAP */
 end
 
-reg [PORT_CNT-1:0] port_hit_full; 
-always @(*) begin
-	case(port_hit) 
-		2'd0: port_hit_full = 3'b001;
-		2'd1: port_hit_full = 3'b010;
-		2'd2: port_hit_full = 3'b100;
-		default: port_hit_full = {PORT_CNT{1'bx}};
-	endcase
-end
-
 assign hit_v_o    = |mac_hit; // will be masked in dispatch on req
-assign hit_port_o = port_hit_full; 
+assign hit_port_o = port_hit; 
 
 `ifdef COCOTB
 localparam N_IDX_W = $clog2(N+1);
