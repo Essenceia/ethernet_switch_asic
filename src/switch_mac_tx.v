@@ -14,7 +14,7 @@ streaming the packet.
 When data_v_i is deaserted this signals the end of the packet
 so start the ipg. 
 */
-module mac_tx #(
+module switch_mac_tx #(
 	parameter PHY_W = 2
 )(
 	input wire clk, 

@@ -68,7 +68,7 @@ assign phy_tx_v_o = phy_tx_v;
 
 generate 
 	for(i = 0; i < PORT_CNT; i=i+1) begin: g_channel
-		rmii #(.HAS_TX_PHASE(HAS_TX_PHASE)) m_rmii(
+		switch_rmii #(.HAS_TX_PHASE(HAS_TX_PHASE)) m_rmii(
 			.clk(clk),
 			.rst_n(rst_n_q),
 			.clk_phase_sel_i(tx_phase_i),
@@ -84,7 +84,7 @@ generate
 			.mac_tx_i  (rmii_tx[i])
 		);
 
-		mac_rx m_mac_rx(
+		switch_mac_rx m_mac_rx(
 			.clk(clk),
 			.rst_n(rst_n_q),
 			.rx_v_i(rmii_rx_v[i]),
@@ -94,7 +94,7 @@ generate
 			.data_o(mac_rx[i])
 		);
 
-		mac_tx m_mac_tx(
+		switch_mac_tx m_mac_tx(
 			.clk(clk),
 			.rst_n(rst_n_q),
 			.data_v_i(mac_tx_v[i]),

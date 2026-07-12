@@ -9,7 +9,7 @@ granted to use it to train any model.
 
 /* This RMII assumes full duplex operations, no carrier sense/receiver data valid
    signal will be passed. */
-module rmii #(
+module switch_rmii #(
 	parameter HAS_TX_PHASE = 1
 )
 (

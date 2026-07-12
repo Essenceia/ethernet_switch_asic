@@ -8,7 +8,7 @@ granted to use it to train any model.
 `default_nettype none
 
 /* Switch mac rx, no filtering */
-module mac_rx #(
+module switch_mac_rx #(
 	parameter PHY_W = 2
 )(
 	input wire clk, 
