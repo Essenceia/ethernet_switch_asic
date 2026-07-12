@@ -27,3 +27,5 @@ set_output_delay -clock $::env(OUTPUT_CLOCK_TX1) -min ${tihold} $::env(PHY_TX1_P
 set_output_delay -clock $::env(OUTPUT_CLOCK_TX2) -max ${tsu} $::env(PHY_TX2_PINS)
 set_output_delay -clock $::env(OUTPUT_CLOCK_TX2) -min ${tihold} $::env(PHY_TX2_PINS)
 
+puts "\[INFO\]\[RMII BUS\] RX setup ${toval} hold ${tohold} TX setup ${tsu} hold ${tihold}" 
+
