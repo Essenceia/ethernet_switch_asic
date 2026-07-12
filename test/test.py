@@ -81,21 +81,24 @@ async def table_entry_expire_test(dut):
 @cocotb.test()
 async def table_multialloc_test(dut): 
 	set_random_seed()
-	await rst(dut) 
-	await coffeepot_tests.table_multialloc_test_sequence(dut)
+	await rst(dut)
+	coffeepot_module = dut.m_dut.m_coffeepot 
+	await coffeepot_tests.table_multialloc_test_sequence(dut, coffeepot_module )
 
 @cocotb.test()
 async def table_realloc_test(dut): 
 	set_random_seed()
 	await rst(dut) 
-	await coffeepot_tests.table_realloc_test_sequence(dut)
+	coffeepot_module = dut.m_dut.m_coffeepot 
+	await coffeepot_tests.table_realloc_test_sequence(dut, coffeepot_module)
 
 # sim only tests: need accurate tracking of entry liveness to prevent fausle failes
 @cocotb.test(skip=True if GATES == "yes" else False)
 async def table_stress_read(dut):
 	set_random_seed()
 	await rst(dut)
-	await coffeepot_tests.table_stress_read_sequence(dut)
+	coffeepot_module = dut.m_dut.m_coffeepot 
+	await coffeepot_tests.table_stress_read_sequence(dut, coffeepot_module)
 
 @cocotb.test()
 async def no_rebroadcsat_on_incomming_test(dut):

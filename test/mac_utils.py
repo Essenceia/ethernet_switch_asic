@@ -116,7 +116,7 @@ def bitpair_to_bytes(buff):
 
 	cocotb.log.debug(f"tx frame {frame.tobytes().hex()} ({len(frame)})") 
 	cocotb.log.debug(f"i {i}") 
-	assert(i % 4 == 0)
+	assert i % 4 == 0, f"expecting buffer length to be a multiple of 4 but got {i}(i % 4 = {i%4}) for buff {frame.tobytes().hex()}"
 	return frame
 
 async def read_tx_frame(dut, port_idx : int) -> bytes:

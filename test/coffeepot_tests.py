@@ -172,7 +172,7 @@ async def table_entry_expire_test_sequence(dut):
 		await ClockCycles(dut.clk, table_utils.ENTRY_EXPIERY_TIMEOUT)
 		await check_broadcast(dut, src_port = phy_utils.random_exclude_port(origin_port), src_mac = table_utils.random_unicast_mac(), dst_mac = src_mac)
 
-async def table_multialloc_test_sequence(dut): 
+async def table_multialloc_test_sequence(dut, module ): 
 	for i in range(0, TEST_ITER): 
 		dst_mac = table_utils.random_broadcast_mac() 
 		src_mac = table_utils.random_unicast_mac() 
@@ -184,14 +184,14 @@ async def table_multialloc_test_sequence(dut):
 		await check_unicast(dut, src_port = phy_utils.random_exclude_port(origin_port), dst_port = origin_port, dst_mac = src_mac, src_mac = table_utils.random_unicast_mac())
 		if not GATES:
 			if 2*(i+1) >= table_utils.ENTRY_NUM: 
-				assert dut.m_dut.m_coffeepot.m_switch.m_lookup.m_dispatcher.m_table.cocotb_nobody_is_dead.value == 1, f"Unexpacted invalid table entry"
+				assert module.m_switch.m_lookup.m_dispatcher.m_table.cocotb_nobody_is_dead.value == 1, f"Unexpacted invalid table entry"
 			else:
-				alloc_cnt =  dut.m_dut.m_coffeepot.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_alloc_cnt.value
+				alloc_cnt =  module.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_alloc_cnt.value
 				assert alloc_cnt == 2*(i+1), f"Expecting {i} allocated table entries got {alloc_cnt}"
 		# IPG
 		await ClockCycles(dut.clk, 2*8*4 + 1)
 
-async def table_realloc_test_sequence(dut): 
+async def table_realloc_test_sequence(dut, module ): 
 	src_mac = table_utils.random_unicast_mac() 
 	for i in range(0, TEST_ITER): 
 		dst_mac = table_utils.random_broadcast_mac() 
@@ -200,10 +200,10 @@ async def table_realloc_test_sequence(dut):
 		# IPG
 		await ClockCycles(dut.clk, 2*8*4 + 1)
 		if not GATES: 
-			assert dut.m_dut.m_coffeepot.m_switch.m_lookup.m_dispatcher.m_table.cocotb_nobody_is_dead.value == 0, f"Unexpacted multiple allocated table entries"
-			assert dut.m_dut.m_coffeepot.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_alloc_cnt.value == 1, f"Expecting a single allocated table entry"
+			assert module.m_switch.m_lookup.m_dispatcher.m_table.cocotb_nobody_is_dead.value == 0, f"Unexpacted multiple allocated table entries"
+			assert module.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_alloc_cnt.value == 1, f"Expecting a single allocated table entry"
 
-async def table_stress_read_sequence(dut):
+async def table_stress_read_sequence(dut, module ):
 	for _ in range(0, TEST_ITER*5):
 		wr_credits = table_utils.ENTRY_NUM - 1
 		table_utils.clear_seen_src_mac()
@@ -224,11 +224,11 @@ async def table_stress_read_sequence(dut):
 				cocotb.log.info(f"add seen mac:{new_src_mac.hex()} port:{new_src_port}")
 				await ClockCycles(dut.clk, 2*8*4 + 1) 
 			# check entry read 
-			known_sender_mac, known_sender_port = table_utils.random_seen_src_mac(dut, GATES)
+			known_sender_mac, known_sender_port = table_utils.random_seen_src_mac(dut, module, GATES)
 			cocotb.log.info(f"know mac:{known_sender_mac.hex()} port:{known_sender_port}")
-			if table_utils.seen_src_mac_cnt(dut, GATES) > 1:
+			if table_utils.seen_src_mac_cnt(dut, module, GATES) > 1:
 				while True:
-					src_mac, _ = table_utils.random_seen_src_mac(dut, GATES)
+					src_mac, _ = table_utils.random_seen_src_mac(dut, module, GATES)
 					if src_mac != known_sender_mac :
 						break
 			else:

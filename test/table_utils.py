@@ -43,9 +43,9 @@ def is_seen_src_mac(src_mac: bytes(6)) -> bool:
 			return True
 	return False
 
-def seen_src_mac_cnt(dut, gates: bool = True ) -> int:
+def seen_src_mac_cnt(dut, module, gates: bool = True ) -> int:
 	if not gates:
-		alive_cnt = dut.m_dut.m_coffeepot.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_alloc_cnt.value 
+		alive_cnt = module.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_alloc_cnt.value 
 		return alive_cnt.to_unsigned() 
 	else:
 		return len(_seen_mac)
@@ -59,30 +59,30 @@ def add_seen_src_mac(src_mac: bytes(6), src_port: int):
 		_seen_mac.pop()
 		assert len(_seen_mac) <= ENTRY_NUM
 
-def random_seen_src_mac(dut, gates: bool = True) -> tuple[bytes(6), int]:
+def random_seen_src_mac(dut, module, gates: bool = True) -> tuple[bytes(6), int]:
 	assert len(_seen_mac) > 0, f"Empty seen list"
 	assert len(_seen_mac) <= ENTRY_NUM, f"Unexpected seen list length, got {len(_seen_mac)}"
 	while True:
 		mac, port = _seen_mac[random.randrange(0,len(_seen_mac))]
 		if not gates:
-			if _check_alive_margin(dut, mac):
+			if _check_alive_margin(dut, mac, module):
 				break
-			elif _check_survivor(dut) == False:
+			elif _check_survivor(dut, module) == False:
 				assert 0, "Unexpected: everybody is dead" 
 		else: 
 			break
 	return mac, port
 
-def _check_survivor(dut) -> bool:
-	all_dead = dut.m_dut.m_coffeepot.m_switch.m_lookup.m_dispatcher.m_table.cocotb_nobody_is_alive.value 
+def _check_survivor(dut, module ) -> bool:
+	all_dead = module.m_switch.m_lookup.m_dispatcher.m_table.cocotb_nobody_is_alive.value 
 	return all_dead != 1
 
-def _check_alive_margin(dut, mac : bytes(6)) -> bool:
+def _check_alive_margin(dut, mac : bytes(6), module) -> bool:
 	for i in range(0, ENTRY_NUM):
-		entry_mac =  dut.m_dut.m_coffeepot.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_mac[i].value 
+		entry_mac =  module.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_mac[i].value 
 		entry_mac_bytes = entry_mac.to_bytes( byteorder = 'big')
 		if entry_mac_bytes == mac: 
-			entry_ttnn =  dut.m_dut.m_coffeepot.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_ttnn[i].value 
+			entry_ttnn =  module.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_ttnn[i].value 
 			if (entry_ttnn.to_unsigned() >= TTNN_THRESHOLD):
 				return True
 			else:
