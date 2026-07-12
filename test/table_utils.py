@@ -44,7 +44,7 @@ def is_seen_src_mac(src_mac: bytes(6)) -> bool:
 	return False
 
 def seen_src_mac_cnt(dut, gates: bool = True ) -> int:
-	if gates:
+	if not gates:
 		alive_cnt = dut.m_dut.m_coffeepot.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_alloc_cnt.value 
 		return alive_cnt.to_unsigned() 
 	else:
@@ -64,7 +64,7 @@ def random_seen_src_mac(dut, gates: bool = True) -> tuple[bytes(6), int]:
 	assert len(_seen_mac) <= ENTRY_NUM, f"Unexpected seen list length, got {len(_seen_mac)}"
 	while True:
 		mac, port = _seen_mac[random.randrange(0,len(_seen_mac))]
-		if gates:
+		if not gates:
 			if _check_alive_margin(dut, mac):
 				break
 			elif _check_survivor(dut) == False:

@@ -11,7 +11,7 @@ import random
 import asyncio
 import time
 
-import switch_tests
+import coffeepot_tests
 import phy_utils
 
 from array import array 
@@ -58,54 +58,54 @@ async def rst(dut, ena=1 ):
 async def simple_broadcast_test(dut):
 	set_random_seed()
 	await rst(dut) 
-	await switch_tests.simple_unicast_test_sequence(dut)
+	await coffeepot_tests.simple_unicast_test_sequence(dut)
 
 @cocotb.test()
 async def checking_broadcast_test(dut):
 	set_random_seed()
 	await rst(dut)
-	await switch_tests.checking_broadcast_test_sequence(dut)
+	await coffeepot_tests.checking_broadcast_test_sequence(dut)
 
 @cocotb.test()
 async def simple_unicast_test(dut):
 	set_random_seed()
 	await rst(dut) 
-	await switch_tests.simple_unicast_test_sequence(dut)
+	await coffeepot_tests.simple_unicast_test_sequence(dut)
 
 @cocotb.test()
 async def table_entry_expire_test(dut):
 	set_random_seed()
 	await rst(dut) 
-	await switch_tests.table_entry_expire_test_sequence(dut)
+	await coffeepot_tests.table_entry_expire_test_sequence(dut)
 
 @cocotb.test()
 async def table_multialloc_test(dut): 
 	set_random_seed()
 	await rst(dut) 
-	await switch_tests.table_multialloc_test_sequence(dut)
+	await coffeepot_tests.table_multialloc_test_sequence(dut)
 
 @cocotb.test()
 async def table_realloc_test(dut): 
 	set_random_seed()
 	await rst(dut) 
-	await switch_tests.table_realloc_test_sequence(dut)
+	await coffeepot_tests.table_realloc_test_sequence(dut)
 
 # sim only tests: need accurate tracking of entry liveness to prevent fausle failes
 @cocotb.test(skip=True if GATES == "yes" else False)
 async def table_stress_read(dut):
 	set_random_seed()
 	await rst(dut)
-	await switch_tests.table_stress_read_sequence(dut)
+	await coffeepot_tests.table_stress_read_sequence(dut)
 
 @cocotb.test()
 async def no_rebroadcsat_on_incomming_test(dut):
 	set_random_seed()
 	await rst(dut)
-	await switch_tests.no_rebroadcsat_on_incomming_test_sequence(dut)
+	await coffeepot_tests.no_rebroadcsat_on_incomming_test_sequence(dut)
 
 @cocotb.test()
 async def close_rx_packets_test(dut):
 	set_random_seed()
 	await rst(dut)
-	await switch_tests.close_rx_packets_test_sequence(dut)
+	await coffeepot_tests.close_rx_packets_test_sequence(dut)
 
