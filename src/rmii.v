@@ -9,7 +9,7 @@ granted to use it to train any model.
 
 /* This RMII assumes full duplex operations, no carrier sense/receiver data valid
    signal will be passed. */
-module switch_rmii #(
+module rmii #(
 	parameter HAS_TX_PHASE = 1
 )
 (
@@ -45,7 +45,6 @@ generate
 if (HAS_TX_PHASE == 1) begin: g_tx_phase
 tx_tt_buffer m_tx_delay(
 	.ref_clk(clk),
-	.rst_n(rst_n), 
 
 	.clk_phase_sel_i(clk_phase_sel_i),
 

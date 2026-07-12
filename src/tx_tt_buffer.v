@@ -18,7 +18,6 @@ credit for pointing the timing issue out: tnt
 */ 
 module tx_tt_buffer(
 	input wire ref_clk, 
-	input wire rst_n,
 	
 	input wire clk_phase_sel_i, // use dephased clk by 180 to drive tx output
 
@@ -37,7 +36,7 @@ reg [1:0] tx_q;
 reg       clk_phase_sel_q;
 
 always @(posedge ref_clk) 
-	if (~rst_n)clk_phase_sel_q <= clk_phase_sel_i;
+	clk_phase_sel_q <= clk_phase_sel_i;
 
 `ifdef SCL_gf180mcu_fd_sc_mcu7t5v0
 gf180mcu_fd_sc_mcu7t5v0__clkinv_1 m_ref_clk_inv(
