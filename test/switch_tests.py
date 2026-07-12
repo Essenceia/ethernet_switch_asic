@@ -19,10 +19,7 @@ import table_utils
 
 import os
 
-if "GATES" in os.environ:
-	GATES = os.environ["GATES"].lower().strip()
-else:
-	GATES = ""
+GATES = os.getenv("GL", False) or os.getenv("GATES", False)
 
 if "TEST_ITER" in os.environ:
 	TEST_ITER = int(os.environ["TEST_ITER"].lower().strip())
@@ -157,7 +154,7 @@ async def simple_unicast_test_sequence(dut):
 		await check_unicast(dut, src_port = pkt_port, dst_port = target_port, dst_mac = target_mac, src_mac = ignored_mac)
 		# respect IPG	
 		await ClockCycles(dut.clk, 2*8*4 + 1)
-	if GATES == "": 
+	if GATES: 
 		await ClockCycles(dut.clk, table_utils.ENTRY_EXPIERY_TIMEOUT_SHORT)
 		
 		# check entry has expired
@@ -170,7 +167,7 @@ async def table_entry_expire_test_sequence(dut):
 	# send packet with source, table is empty, should be broadcasted
 	origin_port = random.randrange(0, phy_utils.PORT_CNT)
 	await check_broadcast(dut, src_port = origin_port, src_mac = src_mac, dst_mac = table_utils.random_broadcast_mac())
-	if GATES == "": #expire time change between gl and pure sim
+	if GATES: #expire time change between gl and pure sim
 		cocotb.log.info(f"wait for expire {table_utils.ENTRY_EXPIERY_TIMEOUT}")
 		await ClockCycles(dut.clk, table_utils.ENTRY_EXPIERY_TIMEOUT)
 		await check_broadcast(dut, src_port = phy_utils.random_exclude_port(origin_port), src_mac = table_utils.random_unicast_mac(), dst_mac = src_mac)
@@ -185,7 +182,7 @@ async def table_multialloc_test_sequence(dut):
 		await ClockCycles(dut.clk, 2*8*4 + 1)
 		# check entry is properly allocated
 		await check_unicast(dut, src_port = phy_utils.random_exclude_port(origin_port), dst_port = origin_port, dst_mac = src_mac, src_mac = table_utils.random_unicast_mac())
-		if GATES == "":
+		if GATES:
 			if 2*(i+1) >= table_utils.ENTRY_NUM: 
 				assert dut.m_dut.m_coffeepot.m_switch.m_lookup.m_dispatcher.m_table.cocotb_nobody_is_dead.value == 1, f"Unexpacted invalid table entry"
 			else:
@@ -202,7 +199,7 @@ async def table_realloc_test_sequence(dut):
 		await check_broadcast(dut, src_port = origin_port, src_mac = src_mac, dst_mac = dst_mac)
 		# IPG
 		await ClockCycles(dut.clk, 2*8*4 + 1)
-		if GATES == "": 
+		if GATES: 
 			assert dut.m_dut.m_coffeepot.m_switch.m_lookup.m_dispatcher.m_table.cocotb_nobody_is_dead.value == 0, f"Unexpacted multiple allocated table entries"
 			assert dut.m_dut.m_coffeepot.m_switch.m_lookup.m_dispatcher.m_table.cocotb_entry_alloc_cnt.value == 1, f"Expecting a single allocated table entry"
 

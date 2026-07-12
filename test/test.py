@@ -18,10 +18,7 @@ from array import array
 
 import os
 
-if "GATES" in os.environ:
-	GATES = os.environ["GATES"].lower().strip()
-else:
-	GATES = ""
+GATES = os.getenv("GATES", False)
 
 CLK_UNIT="ns"
 CLK_PERIOD=20
