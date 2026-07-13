@@ -9,7 +9,7 @@ granted to use it to train any model.
 
 /* Guaranties no duplicate or broadcast entries */
 module mac_addr_table #(
-	parameter N = 4, // number of entries
+	localparam N = 4, // number of entries
 	parameter MAC_W = 48,
 	parameter PORT_CNT = 3
 )(
@@ -138,17 +138,15 @@ generate
 endgenerate 
 
 reg [PORT_CNT-1:0] port_hit; 
+int x;
 always @(*) begin
-	/* verilator lint_off CASEOVERLAP */
-	(* parallel_case *)
-	casez(mac_hit)
-		4'b???1: port_hit = mem_port_q[0];
-		4'b??1?: port_hit = mem_port_q[1];
-		4'b?1??: port_hit = mem_port_q[2];
-		4'b1???: port_hit = mem_port_q[3];
-		default: port_hit = {PORT_CNT{1'bX}};
-	endcase
-	/* verilator lint_on CASEOVERLAP */
+	port_hit = {PORT_CNT{1'b0}};
+	
+	for(x = 0; x < N; x=x+1) begin
+		if (mac_hit[x]) begin 
+			port_hit = port_hit | mem_port_q[x];
+		end
+	end
 end
 
 assign hit_v_o    = |mac_hit; // will be masked in dispatch on req
