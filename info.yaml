@@ -19,7 +19,6 @@ project:
   source_files:
     - "tt_um_coffeepot.v"
     - "aiguilleur.v"
-    - "dispatcher.v"
     - "mac_addr_table.v"
     - "switch_mac_rx.v"
     - "switch_mac_tx.v"
