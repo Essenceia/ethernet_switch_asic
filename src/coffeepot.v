@@ -8,8 +8,8 @@ granted to use it to train any model.
 `default_nettype none
 
 module coffeepot #(
-	parameter PORT_CNT = 3,
-	parameter PHY_W = 2,
+	parameter PORT_CNT     = 3,
+	parameter PHY_W        = 2,
 	parameter HAS_TX_PHASE = 1
 )(
     input  wire       clk,      
@@ -42,17 +42,17 @@ wire             rmii_rx_v[PORT_CNT-1:0];
 wire             rmii_rx_err[PORT_CNT-1:0];
 wire [PHY_W-1:0] rmii_rx[PORT_CNT-1:0];
 
-wire             mac_rx_v[PORT_CNT-1:0];
-wire [PHY_W-1:0] mac_rx[PORT_CNT-1:0];
+wire [PORT_CNT-1:0] mac_rx_v;
+wire [PHY_W-1:0]    mac_rx[PORT_CNT-1:0];
 // lookup to tx
 wire             rmii_tx_v[PORT_CNT-1:0];
 wire [PHY_W-1:0] rmii_tx[PORT_CNT-1:0];
 
 // switch <-> mac tx
-wire             mac_tx_v[PORT_CNT-1:0];
-wire [PHY_W-1:0] mac_tx[PORT_CNT-1:0];
-wire             mac_tx_last[PORT_CNT-1:0];
-wire             mac_tx_acc[PORT_CNT-1:0];
+wire [PORT_CNT-1:0] mac_tx_v;
+wire [PHY_W-1:0]    mac_tx[PORT_CNT-1:0];
+wire [PORT_CNT-1:0] mac_tx_last;
+wire [PORT_CNT-1:0] mac_tx_acc;
 
 genvar i; 
 
@@ -108,16 +108,25 @@ generate
 	end
 endgenerate
 
-switch m_switch(
+wire [PHY_W*PORT_CNT-1:0] mac_rx_flat; 
+wire [PHY_W*PORT_CNT-1:0] mac_tx_flat; 
+generate
+	for(i = 0; i < PORT_CNT; i=i+1) begin: g_mac_data_flatten
+		assign mac_rx_flat[(i+1)*PHY_W-1-:PHY_W] = mac_rx[i];
+		assign mac_tx[i] = mac_tx_flat[(i+1)*PHY_W-1-:PHY_W];
+	end
+endgenerate
+
+switch #(.PORT_CNT(PORT_CNT), .PHY_W(PHY_W)) m_switch(
 	.clk(clk), 
 	.rst_n(rst_n_q), 
-	.mac_rx_v_i({mac_rx_v[2], mac_rx_v[1], mac_rx_v[0]}),
-	.mac_rx_i({mac_rx[2], mac_rx[1], mac_rx[0]}),
+	.mac_rx_v_i(mac_rx_v),
+	.mac_rx_i(mac_rx_flat),
 	
-	.mac_tx_v_o({mac_tx_v[2], mac_tx_v[1], mac_tx_v[0]}),
-	.mac_tx_o({mac_tx[2], mac_tx[1], mac_tx[0]}),
-	.mac_tx_last_o({mac_tx_last[2], mac_tx_last[1], mac_tx_last[0]}),
+	.mac_tx_v_o(mac_tx_v),
+	.mac_tx_o(mac_tx_flat),
+	.mac_tx_last_o(mac_tx_last),
 	
-	.mac_tx_acc_i({mac_tx_acc[2], mac_tx_acc[1], mac_tx_acc[0]})
+	.mac_tx_acc_i(mac_tx_acc)
 );
 endmodule
