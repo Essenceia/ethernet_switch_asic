@@ -9,8 +9,8 @@ granted to use it to train any model.
 
 /* Guaranties no duplicate or broadcast entries */
 module mac_addr_table #(
-	localparam N = 4, // number of entries
-	parameter MAC_W = 48,
+	localparam N       = 4, // number of entries
+	parameter MAC_W    = 48,
 	parameter PORT_CNT = 3
 )(
 	input wire clk, 
@@ -41,6 +41,7 @@ localparam MAC_GROUP_IDX = 40;
 reg [MAC_W-1:0]      mem_mac_q[N-1:0];
 reg [PORT_CNT-1:0]   mem_port_q[N-1:0];
 reg [TTNN_W-1:0]     mem_ttnn_q[N-1:0];
+wire [N*TTNN_W-1:0]  mem_ttnn_flat; 
 
 /* memory fsm : coordinate read/writes, trigger regular ttnn updates */
 localparam IDLE   = 2'd0; 
@@ -75,8 +76,15 @@ ttnn_timer #(.TTNN_W(TTNN_W)) m_ttnn_timer(
 // replacement policy 
 wire [N-1:0] victime_next;
 reg  [N-1:0] victime_q;
+
+genvar i; 
+generate 
+	for(i=0; i < N; i=i+1) begin: g_mem_ttnn_flat
+		assign mem_ttnn_flat[(i+1)*TTNN_W-1-:TTNN_W] = mem_ttnn_q[i];
+	end
+endgenerate
 replacement_policy #(.TTNN_W(TTNN_W)) m_replacement_policy(
-	.ttnn_i({mem_ttnn_q[3], mem_ttnn_q[2], mem_ttnn_q[1], mem_ttnn_q[0]}),
+	.ttnn_i(mem_ttnn_flat),
 	.victime_o(victime_next)
 );
 always @(posedge clk)
@@ -89,7 +97,6 @@ wire [N-1:0] alive_v;
 reg  [N-1:0] wr_sel;
 wire         wr_mac_group; 
 
-genvar i; 
 
 assign wr_mac_group = wr_mac_i[MAC_GROUP_IDX]; // don't write group addresses, should be broadcasted
 assign wr_sel = mac_hit // collison, overwrite entry 
@@ -163,7 +170,7 @@ wire [TTNN_W-1:0]  cocotb_entry_ttnn[N-1:0];
 
 assign cocotb_nobody_is_dead  = &alive_v;
 assign cocotb_nobody_is_alive = ~|alive_v;
-assign cocotb_entry_alloc_cnt = alive_v[3] + alive_v[2] + alive_v[1] + alive_v[0];
+assign cocotb_entry_alloc_cnt = $countones(alive_v);
 assign cocotb_entry_mac       = mem_mac_q; 
 assign cocotb_entry_ttnn      = mem_ttnn_q; 
 
