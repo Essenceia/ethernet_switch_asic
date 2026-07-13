@@ -84,7 +84,7 @@ wire                lookup_req_early_v;
 wire [PORT_CNT-1:0] lookup_req_port; 
 wire [MAC_W-1:0]    lookup_mac; 
 
-arbitor m_lookup_arbitor(
+arbitor #(.PORT_CNT(PORT_CNT), .MAC_W(MAC_W)) m_lookup_arbitor(
 	.clk(clk),
 	.req_early_i(dst_mac_v_next),
 	.req_mac_i(header_mac_flat),
@@ -99,7 +99,7 @@ wire [MAC_W-1:0]    wr_mac;
 wire [PORT_CNT-1:0] wr_port;
 wire                wr_v_unused; 
 
-arbitor m_wr_arbitor(
+arbitor #(.PORT_CNT(PORT_CNT), .MAC_W(MAC_W)) m_wr_arbitor(
 	.clk(clk),
 	.req_early_i(src_mac_v_next),
 	.req_mac_i(header_mac_flat),
