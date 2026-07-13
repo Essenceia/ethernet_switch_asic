@@ -8,9 +8,10 @@ granted to use it to train any model.
 `default_nettype none
 
 module lookup #(
-	parameter PORT_CNT = 3, 
-	localparam DISP_SEL_W = PORT_CNT*(PORT_CNT-1),
-	parameter MAC_W = 48
+	parameter  PORT_CNT   = 3, 
+	localparam SEL_W      = PORT_CNT-1,
+	localparam DISP_SEL_W = PORT_CNT*SEL_W,
+	parameter  MAC_W      = 48
 )(
 	input wire clk, 
 	input wire rst_n,
@@ -30,10 +31,8 @@ module lookup #(
 	output wire [DISP_SEL_W-1:0] dir_o	
 );
 wire [PORT_CNT-1:0]   disp_lite; 
-wire [DISP_SEL_W-1:0] dir;
-
-wire                hit; 
-wire [PORT_CNT-1:0] hit_port;  
+wire                  hit; 
+wire [PORT_CNT-1:0]   hit_port;  
 
 // unicast -> mac lookup, fallback to broadcast in case of no match
 mac_addr_table #(
@@ -56,26 +55,29 @@ mac_addr_table #(
 );
 
 // remap hit to dispatch directive
-localparam SEL_W = PORT_CNT-1;
 
 wire [DISP_SEL_W-1:0] dir_broadcast_lite;
 wire [DISP_SEL_W-1:0] dir_hit_masked;
-wire [DISP_SEL_W-1:0] hit_mask;
-assign dir_broadcast_lite = {{req_port_i[1:0]}, // tx2
-				   {req_port_i[2], req_port_i[0]}, // tx1
-                   {req_port_i[2:1]}};// tx0
+wire [DISP_SEL_W-1:0] hit_mask; // fallback on broadcast in case of no hit
 
-// fallback on broadcast in case of no hit
-assign hit_mask = { {SEL_W{hit_port[2] | ~hit}},
-					{SEL_W{hit_port[1] | ~hit}},
-					{SEL_W{hit_port[0] | ~hit}}}; 
+genvar i;
+generate 
+	assign dir_broadcast_lite[SEL_W-1:0] = req_port_i[PORT_CNT-1:1];	
+	for (i=1; i < PORT_CNT-1; i = i+1) begin: g_broadcast_lite
+		assign dir_broadcast_lite[(i+1)*SEL_W-1-:SEL_W] = { req_port_i[PORT_CNT-1:PORT_CNT-1-(i-1)], req_port_i[0+(i-1):0]};	
+	end
+	assign dir_broadcast_lite[DISP_SEL_W-1-:SEL_W] = req_port_i[PORT_CNT-2:0];	
+	
+	for (i=0; i < PORT_CNT; i = i+1) begin: g_hit_mask
+		assign hit_mask[(i+1)*SEL_W-1-:SEL_W] = {SEL_W{hit_port[i] | ~hit}};
+	end
+endgenerate
+
 assign dir_hit_masked = dir_broadcast_lite & hit_mask; 
+assign disp_lite      = ({PORT_CNT{~hit}} | hit_port) & ~req_port_i & {PORT_CNT{req_v_i}}; 
 
 // output 
-assign disp_lite = ({PORT_CNT{~hit}} | hit_port) & ~req_port_i & {PORT_CNT{req_v_i}}; 
-assign dir       = dir_hit_masked; 
-
 assign new_dispatch_o = phy_tx_free_i & disp_lite;
-assign dir_o = dir; 
+assign dir_o          = dir_hit_masked; 
 
 endmodule	
