@@ -110,8 +110,10 @@ arbitor #(.PORT_CNT(PORT_CNT), .MAC_W(MAC_W)) m_wr_arbitor(
 );
 
 // lookup and dispatch 
-wire [PORT_CNT-1:0]              new_disp; 
-wire [PORT_CNT*(PORT_CNT-1)-1:0] disp_dir; 
+localparam SEL_W = PORT_CNT-1;
+
+wire [PORT_CNT-1:0]       new_disp; 
+wire [PORT_CNT*SEL_W-1:0] disp_dir; 
 lookup m_lookup(
 	.clk(clk), 
 	.rst_n(rst_n), 
@@ -136,37 +138,46 @@ reg  [PORT_CNT-1:0]       mac_tx_v_q;
 wire [PORT_CNT*PHY_W-1:0] mac_tx_next;
 reg  [PORT_CNT*PHY_W-1:0] mac_tx_q;
 
-// needs to be hand coded
-aiguilleur m_aiguille_tx0(
-	.clk(clk), 
-	.rst_n(rst_n), 
-	.new_dispatch_i(new_disp[0]),
-	.dir_i(disp_dir[PORT_CNT-2:0]),
-	.mac_rx_v_i({buff_v_q[2][BUF_V_W-1], buff_v_q[1][BUF_V_W-1]}),
-	.mac_rx_i  ({buff_q[2][BUF_W-1-:PHY_W], buff_q[1][BUF_W-1-:PHY_W]}),
-	.mac_tx_v_o(mac_tx_v_next[0]),
-	.mac_tx_o(mac_tx_next[PHY_W-1:0])
-);
-aiguilleur m_aiguille_tx1(
-	.clk(clk), 
-	.rst_n(rst_n), 
-	.new_dispatch_i(new_disp[1]),
-	.dir_i(disp_dir[2*(PORT_CNT-1)-1-:PORT_CNT-1]),
-	.mac_rx_v_i({buff_v_q[2][BUF_V_W-1], buff_v_q[0][BUF_V_W-1]}),
-	.mac_rx_i  ({buff_q[2][BUF_W-1-:PHY_W], buff_q[0][BUF_W-1-:PHY_W]}),
-	.mac_tx_v_o(mac_tx_v_next[1]),
-	.mac_tx_o(mac_tx_next[2*PHY_W-1-:PHY_W])
-);
-aiguilleur m_aiguille_tx2(
-	.clk(clk), 
-	.rst_n(rst_n), 
-	.new_dispatch_i(new_disp[2]),
-	.dir_i(disp_dir[3*(PORT_CNT-1)-1-:PORT_CNT-1]),
-	.mac_rx_v_i({buff_v_q[1][BUF_V_W-1], buff_v_q[0][BUF_V_W-1]}),
-	.mac_rx_i  ({buff_q[1][BUF_W-1-:PHY_W], buff_q[0][BUF_W-1-:PHY_W]}),
-	.mac_tx_v_o(mac_tx_v_next[2]),
-	.mac_tx_o(mac_tx_next[3*PHY_W-1-:PHY_W])
-);
+wire [SEL_W*PHY_W-1:0] aig_mac_rx[PORT_CNT-1:0];
+wire [SEL_W-1:0]       aig_mac_rx_v[PORT_CNT-1:0];
+
+// I liked this more when this was hand coded, but alsa, 
+// this allows us to dynamically scale with the number of PHY ports
+genvar j; 
+generate 
+	// aig0 
+	for(i=0; i < SEL_W; i=i+1) begin: g_aiguilleur_mac_first
+		assign aig_mac_rx_v[0][i] = buff_v_q[i+1][BUF_V_W-1];
+		assign aig_mac_rx[0][(i+1)*PHY_W-1-:PHY_W]   = buff_q[i+1][BUF_W-1-:PHY_W];
+	end
+	for(j=1; j < PORT_CNT-1; j = j+1) begin: g_aiguilleur_port_iterator
+		for(i=0; i < SEL_W; i=i+1) begin: g_aiguilleur_mac_middle
+			localparam int k = (i >= j)? i+1 : i; 
+			assign aig_mac_rx_v[j][i] = buff_v_q[k][BUF_V_W-1];
+			assign aig_mac_rx[j][(i+1)*PHY_W-1-:PHY_W] = buff_q[k][BUF_W-1-:PHY_W];
+		end
+	end
+	for(i=0; i < SEL_W; i=i+1) begin: g_aiguilleur_mac_last
+		assign aig_mac_rx_v[PORT_CNT-1][i] = buff_v_q[i][BUF_V_W-1];
+		assign aig_mac_rx[PORT_CNT-1][(i+1)*PHY_W-1-:PHY_W] = buff_q[i][BUF_W-1-:PHY_W];
+	end
+
+	for(i=0; i < PORT_CNT; i=i+1) begin: g_aiguilleur
+		aiguilleur m_aiguille_tx(
+			.clk(clk), 
+			.rst_n(rst_n), 
+			.new_dispatch_i(new_disp[i]),
+
+			.dir_i(disp_dir[(i+1)*SEL_W-1-:SEL_W]), 
+			// todo
+			.mac_rx_v_i(aig_mac_rx_v[i]),
+			.mac_rx_i  (aig_mac_rx[i]),
+
+			.mac_tx_v_o(mac_tx_v_next[i]),
+			.mac_tx_o(mac_tx_next[(i+1)*PHY_W-1-:PHY_W])
+		);		
+	end
+endgenerate
 
 always @(posedge clk) begin
 	mac_tx_v_q <= mac_tx_v_next;
