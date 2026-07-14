@@ -22,7 +22,7 @@ project:
     - "mac_addr_table.v"
     - "switch_mac_rx.v"
     - "switch_mac_tx.v"
-    - "switch_rmii.v"
+    - "rmii.v"
     - "switch.v"
     - "tx_tt_buffer.v"
     - "utils.v"
