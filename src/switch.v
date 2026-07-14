@@ -114,7 +114,7 @@ localparam SEL_W = PORT_CNT-1;
 
 wire [PORT_CNT-1:0]       new_disp; 
 wire [PORT_CNT*SEL_W-1:0] disp_dir; 
-lookup m_lookup(
+lookup #(.PORT_CNT(PORT_CNT)) m_lookup(
 	.clk(clk), 
 	.rst_n(rst_n), 
 	.req_v_i(lookup_req_v),

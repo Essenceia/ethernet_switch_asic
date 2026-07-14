@@ -64,7 +64,7 @@ genvar i;
 generate 
 	assign dir_broadcast_lite[SEL_W-1:0] = req_port_i[PORT_CNT-1:1];	
 	for (i=1; i < PORT_CNT-1; i = i+1) begin: g_broadcast_lite
-		assign dir_broadcast_lite[(i+1)*SEL_W-1-:SEL_W] = { req_port_i[PORT_CNT-1:PORT_CNT-1-(i-1)], req_port_i[0+(i-1):0]};	
+		assign dir_broadcast_lite[(i+1)*SEL_W-1-:SEL_W] = { req_port_i[PORT_CNT-1:(i+1)], req_port_i[(i-1):0]};	
 	end
 	assign dir_broadcast_lite[DISP_SEL_W-1-:SEL_W] = req_port_i[PORT_CNT-2:0];	
 	
