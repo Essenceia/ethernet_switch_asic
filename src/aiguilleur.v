@@ -8,23 +8,25 @@ granted to use it to train any model.
 `default_nettype none
 
 module aiguilleur #(
-	parameter PHY_W = 2,
-	localparam PORT_CNT = 3
+	parameter  PHY_W    = 2,
+	parameter  PORT_CNT = 3,
+	localparam SEL_W    = PORT_CNT-1 
 )(
 	input wire clk, 
 	input wire rst_n, 
 
-	input wire new_dispatch_i, 
-	input wire [PORT_CNT-2:0] dir_i,
+	input wire                   new_dispatch_i, 
+	input wire [SEL_W-1:0]       dir_i,
 
-	input wire [PORT_CNT-2:0]           mac_rx_v_i,
-	input wire [(PORT_CNT-1)*PHY_W-1:0] mac_rx_i,
+	input wire [SEL_W-1:0]       mac_rx_v_i,
+	input wire [SEL_W*PHY_W-1:0] mac_rx_i,
 
 	output wire             mac_tx_v_o,
 	output wire [PHY_W-1:0] mac_tx_o
 );
-reg [PORT_CNT-2:0] sel_onehot_q;
-wire mac_tx_v; 
+reg [SEL_W-1:0] sel_onehot_q;
+reg             mac_tx_v; 
+reg [PHY_W-1:0] mac_tx; 
 
 localparam IDLE     = 2'd0;
 localparam PREAMBLE = 2'd1;
@@ -54,9 +56,20 @@ end
 
 // valid should be masked in case valid data is being transmitted on an 
 // unselected port (eg: start during IPG)
-assign mac_tx_v = sel_onehot_q[0] & mac_rx_v_i[0] | sel_onehot_q[1] & mac_rx_v_i[1];
+int x; 
+always @(*) begin
+	mac_tx_v = 1'b0;
+	mac_tx = {PHY_W{1'b0}};
+
+	for(x = 0; x < SEL_W; x = x+1) begin
+		if (sel_onehot_q[x]) begin 
+			mac_tx_v = mac_tx_v | mac_rx_v_i[x];
+			mac_tx = mac_tx | mac_rx_i[(x+1)*PHY_W-1-:PHY_W];
+		end
+	end	
+end
+
 assign mac_tx_v_o = |sel_onehot_q & ~((fsm_q == PACKET) & ~mac_tx_v);
-// could make this an reduction of masked data, but deciding to hand off control to synth
-assign mac_tx_o = sel_onehot_q[0] ? mac_rx_i[PHY_W-1:0] : mac_rx_i[2*PHY_W-1-:PHY_W];
+assign mac_tx_o   = mac_tx;
 
 endmodule

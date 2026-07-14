@@ -163,7 +163,7 @@ generate
 	end
 
 	for(i=0; i < PORT_CNT; i=i+1) begin: g_aiguilleur
-		aiguilleur m_aiguille_tx(
+		aiguilleur #(.PHY_W(PHY_W), .PORT_CNT(PORT_CNT)) m_aiguille_tx(
 			.clk(clk), 
 			.rst_n(rst_n), 
 			.new_dispatch_i(new_disp[i]),
