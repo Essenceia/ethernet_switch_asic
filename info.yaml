@@ -18,6 +18,7 @@ project:
   # Don't forget to also update `PROJECT_SOURCES` in test/Makefile.
   source_files:
     - "tt_um_coffeepot.v"
+    - "coffeepot.v"
     - "aiguilleur.v"
     - "mac_addr_table.v"
     - "switch_mac_rx.v"
