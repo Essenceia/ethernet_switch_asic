@@ -20,8 +20,7 @@
   "CLOCK_PERIOD": 20,
 
   "//": "Hold slack margin - Increase them in case you are getting hold violations.",
-  "PL_RESIZER_HOLD_SLACK_MARGIN": 0.15,
-  "GRT_RESIZER_HOLD_SLACK_MARGIN": 0.25,
+  "PL_RESIZER_HOLD_SLACK_MARGIN": 0.1,
 
   "//": "RUN_LINTER, LINTER_INCLUDE_PDK_MODELS - Disabling the linter is not recommended!",
   "RUN_LINTER": 1,
@@ -37,13 +36,24 @@
   "FALLBACK_SDC": "dir::base.sdc",
  
   "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.25,
-  
+  "RUN_POST_GRT_RESIZER_TIMING":"True",
+ 
   "SYNTH_AUTONAME": "True",
  
   "RUN_POST_GRT_DESIGN_REPAIR": "True", 
   "RUN_POST_GPL_DESIGN_REPAIR": "False",
   "RUN_POST_CTS_RESIZE_TIMING": "True",
   "RUN_POST_GRT_RESIZE_TIMING": "True",
+  "STA_CORNERS": [
+    "nom_tt_025C_3v30",
+    "nom_ss_125C_3v00",
+    "nom_ff_n40C_3v60",
+    "min_tt_025C_3v30",
+    "min_ss_125C_3v00",
+    "min_ff_n40C_3v60",
+    "max_tt_025C_3v30",
+    "max_ss_125C_3v00"
+  ],
  
   "DESIGN_REPAIR_MAX_SLEW_PCT":22,
 
