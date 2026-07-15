@@ -41,14 +41,17 @@ always @(posedge clk) begin
 	end else begin
 		case(fsm_q)
 			IDLE: begin
-				fsm_q <= new_dispatch_i ? PREAMBLE: IDLE; 
-				sel_onehot_q <= dir_i; 
+				fsm_q        <= new_dispatch_i ? PREAMBLE: IDLE; 
+				sel_onehot_q <= new_dispatch_i? dir_i: {SEL_W{1'b0}}; 
 				end
 			PREAMBLE: fsm_q <= mac_tx_v ? PACKET: PREAMBLE;
-			PACKET: fsm_q <= ~mac_tx_v ? IDLE: PACKET;
+			PACKET: begin
+				fsm_q <= ~mac_tx_v ? IDLE: PACKET;
+				sel_onehot_q <= {SEL_W{1'b0}};
+				end
 			default: begin
 				fsm_q <= IDLE; 
-				sel_onehot_q <= {PORT_CNT-1{1'b0}};
+				sel_onehot_q <= {SEL_W{1'b0}};
 				end
 		endcase
 	end
