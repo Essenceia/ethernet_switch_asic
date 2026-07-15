@@ -40,7 +40,7 @@ localparam MAC_GROUP_IDX = 40;
 // TODO : analog CAM
 reg [MAC_W-1:0]      mem_mac_q[N-1:0];
 reg [PORT_CNT-1:0]   mem_port_q[N-1:0];
-reg [TTNN_W-1:0]     mem_ttnn_q[N-1:0];
+(* keep = "true", dont_touch = "true" *)reg [TTNN_W-1:0]     mem_ttnn_q[N-1:0];
 wire [N*TTNN_W-1:0]  mem_ttnn_flat; 
 
 /* memory fsm : coordinate read/writes, trigger regular ttnn updates */
@@ -49,10 +49,12 @@ localparam WRITE  = 2'd1;
 localparam UPDATE = 2'd2;
 reg [1:0] fsm_q; 
 
-wire wr_v;
+(* keep = "true", dont_touch = "true" *) wire wr_v;
+(* keep = "true", dont_touch = "true" *) wire debug_wr_early_v;
 wire req_ttnn_update;
 wire [MAC_W-1:0] rd_mac; 
 
+assign debug_wr_early_v = wr_early_v_i;
 always @(posedge clk) begin
 	if (~rst_n) fsm_q <= IDLE; 
 	else begin

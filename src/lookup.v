@@ -31,8 +31,8 @@ module lookup #(
 	output wire [DISP_SEL_W-1:0] dir_o	
 );
 wire [PORT_CNT-1:0]   disp_lite; 
-wire                  hit; 
-wire [PORT_CNT-1:0]   hit_port;  
+(* keep = "true" , dont_touch = "true" *)wire                  hit; 
+(* keep = "true" , dont_touch = "true" *)wire [PORT_CNT-1:0]   hit_port;  
 
 // unicast -> mac lookup, fallback to broadcast in case of no match
 mac_addr_table #(

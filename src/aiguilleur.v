@@ -24,9 +24,11 @@ module aiguilleur #(
 	output wire             mac_tx_v_o,
 	output wire [PHY_W-1:0] mac_tx_o
 );
-reg [SEL_W-1:0] sel_onehot_q;
-reg             mac_tx_v; 
-reg [PHY_W-1:0] mac_tx; 
+(* keep = "true" , dont_touch = "true" *)reg [SEL_W-1:0] sel_onehot_q;
+(* keep = "true" , dont_touch = "true" *)reg             mac_tx_v; 
+(* keep = "true" , dont_touch = "true" *)reg [PHY_W-1:0] mac_tx; 
+(* keep = "true" , dont_touch = "true" *)wire debug_new_dispatch;
+assign debug_new_dispatch = new_dispatch_i;  
 
 localparam IDLE     = 2'd0;
 localparam PREAMBLE = 2'd1;
@@ -42,7 +44,7 @@ always @(posedge clk) begin
 		case(fsm_q)
 			IDLE: begin
 				fsm_q <= new_dispatch_i ? PREAMBLE: IDLE; 
-				sel_onehot_q <= dir_i; 
+				sel_onehot_q <= new_dispatch_i ? dir_i : {{SEL_W{1'b0}}; 
 				end
 			PREAMBLE: fsm_q <= mac_tx_v ? PACKET: PREAMBLE;
 			PACKET: fsm_q <= ~mac_tx_v ? IDLE: PACKET;

@@ -34,6 +34,8 @@ localparam BUF_V_W        = DATA_DELAY / PHY_W;
 // buffer incomming data
 reg [BUF_W-1:0]   buff_q  [PORT_CNT-1:0];
 reg [BUF_V_W-1:0] buff_v_q[PORT_CNT-1:0];
+(* keep = "true", dont_touch = "true" *)wire [PORT_CNT-1:0] debug_mac_rx_v_i; 
+assign debug_mac_rx_v_i = mac_rx_v_i;
 
 genvar i; 
 generate 
@@ -57,7 +59,7 @@ wire [MAC_W-1:0]          header_mac[PORT_CNT-1:0];// keeping intermediary signa
 wire [PORT_CNT*MAC_W-1:0] header_mac_flat;
 
 wire [PORT_CNT-1:0] dst_mac_v_next;
-wire [PORT_CNT-1:0] src_mac_v_next;
+(* keep = "true", dont_touch = "true" *)wire [PORT_CNT-1:0] src_mac_v_next;
 
 generate
 	for(i = 0; i < PORT_CNT; i=i+1) begin: g_port_mac
@@ -94,7 +96,7 @@ arbitor #(.PORT_CNT(PORT_CNT), .MAC_W(MAC_W)) m_lookup_arbitor(
 	.req_mac_o(lookup_mac)
 );
 // write abritration
-wire                wr_early_v; 
+(* keep = "true", dont_touch = "true" *)wire                wr_early_v; 
 wire [MAC_W-1:0]    wr_mac;
 wire [PORT_CNT-1:0] wr_port;
 wire                wr_v_unused; 
