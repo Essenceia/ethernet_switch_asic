@@ -69,7 +69,7 @@ always @(*) begin
 	end	
 end
 
-assign mac_tx_v_o = |sel_onehot_q & ~((fsm_q == PACKET) & ~mac_tx_v);
+assign mac_tx_v_o = ((fsm_q == PACKET) | (fsm_q == PREAMBLE)) & |sel_onehot_q & ~((fsm_q == PACKET) & ~mac_tx_v);
 assign mac_tx_o   = mac_tx;
 
 endmodule
