@@ -45,10 +45,7 @@ always @(posedge clk) begin
 				sel_onehot_q <= new_dispatch_i? dir_i: {SEL_W{1'b0}}; 
 				end
 			PREAMBLE: fsm_q <= mac_tx_v ? PACKET: PREAMBLE;
-			PACKET: begin
-				fsm_q <= ~mac_tx_v ? IDLE: PACKET;
-				sel_onehot_q <= {SEL_W{1'b0}};
-				end
+			PACKET: fsm_q <= ~mac_tx_v ? IDLE: PACKET;
 			default: begin
 				fsm_q <= IDLE; 
 				sel_onehot_q <= {SEL_W{1'b0}};
