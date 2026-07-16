@@ -13,7 +13,7 @@
 
   "//": "PL_TARGET_DENSITY_PCT - You can increase this if Global Placement fails with error GPL-0302.",
   "//": "Users have reported that values up to 80 worked well for them.",
-  "PL_TARGET_DENSITY_PCT": 70,
+  "PL_TARGET_DENSITY_PCT": 75,
 
   "//": "CLOCK_PERIOD - Increase this in case you are getting setup time violations.",
   "//": "The value is in nanoseconds, so 20ns == 50MHz.",
@@ -40,25 +40,16 @@
  
   "SYNTH_AUTONAME": "True",
  
-  "RUN_POST_GRT_DESIGN_REPAIR": "True", 
-  "RUN_POST_GPL_DESIGN_REPAIR": "True",
+  "RUN_POST_GRT_DESIGN_REPAIR": "False", 
+  "RUN_POST_GPL_DESIGN_REPAIR": "False",
   "RUN_POST_CTS_RESIZE_TIMING": "True",
   "RUN_POST_GRT_RESIZE_TIMING": "True",
-  "STA_CORNERS": [
-    "nom_tt_025C_3v30",
-    "nom_ss_125C_3v00",
-    "nom_ff_n40C_3v60",
-    "min_tt_025C_3v30",
-    "min_ss_125C_3v00",
-    "min_ff_n40C_3v60",
-    "max_tt_025C_3v30",
-    "max_ss_125C_3v00"
-  ],
- 
+
   "DESIGN_REPAIR_MAX_SLEW_PCT":22,
 
   "CTS_CLK_MAX_WIRE_LENGTH": 250, 
 
+  "SYNTH_STRATEGY": "AREA 3",
   "//": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
   "//": "!!! DO NOT CHANGE ANYTHING BELOW THIS POINT !!!",
   "//": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
