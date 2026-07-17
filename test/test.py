@@ -84,6 +84,8 @@ async def table_multialloc_test(dut):
 	await rst(dut)
 	if not GATES:
 		coffeepot_module = dut.m_dut.m_coffeepot 
+	else 
+		coffeepot_module = None
 	await coffeepot_tests.table_multialloc_test_sequence(dut, coffeepot_module )
 
 @cocotb.test()
@@ -92,6 +94,8 @@ async def table_realloc_test(dut):
 	await rst(dut) 
 	if not GATES:
 		coffeepot_module = dut.m_dut.m_coffeepot 
+	else 
+		coffeepot_module = None	
 	await coffeepot_tests.table_realloc_test_sequence(dut, coffeepot_module)
 
 # sim only tests: need accurate tracking of entry liveness to prevent fausle failes
@@ -101,6 +105,8 @@ async def table_stress_read(dut):
 	await rst(dut)
 	if not GATES:
 		coffeepot_module = dut.m_dut.m_coffeepot 
+	else 
+		coffeepot_module = None
 	await coffeepot_tests.table_stress_read_sequence(dut, coffeepot_module)
 
 @cocotb.test()
