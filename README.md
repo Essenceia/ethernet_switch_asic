@@ -1,13 +1,18 @@
 # 100Mbps Ethernet Switch ASIC
 
-Fully open source 3 port cut-through unmanaged 100Mbps ethernet switch ASIC targeting the [Global Foundry 180nm MCU node (gf180mcuD)](https://gf180mcu-pdk.readthedocs.io/en/latest/). 
+Fully open source variable port cut-through unmanaged 100Mbps ethernet switch ASIC targeting the [Global Foundry 180nm MCU node (gf180mcuD)](https://gf180mcu-pdk.readthedocs.io/en/latest/). 
 
-The first version of this chip is currently tapped out on the [Tiny Tapeout gf26b shuttle chip](https://tinytapeout.com/chips/ttgf26b/), part of the second [wafer.space](https://wafer.space/) run, and silicon bring-up is expected to start 2026-11-15. 
+The first version of this design is a 3 port version, currently tapped out on the [Tiny Tapeout gf26b shuttle chip](https://tinytapeout.com/chips/ttgf26b/), part of the second [wafer.space](https://wafer.space/) run, and silicon bring-up is expected to start 2026-11-15. 
 
 ![feature](/docs/feature.png) 
 
+The second version of this design is a 4 port version, part of the full [Expresso ASIC](https://github.com/Essenceia/Expresso_ASIC_Chip), an Ethernet focused fully open source chip, applying to be part of the sponsored open source project on the second [wafer.space](https://wafer.space/) run. 
+
+![full chip](/docs/ws_run2_chip.png)
+
 Features: 
-- 3x Full duplex Ethernet ports, 100Mbps over RMII 
+- Full duplex Ethernet ports, 100Mbps over RMII
+- Configurable port counts
 - Unmanaged switch 
 - Cut-though forwarding 
 
@@ -21,9 +26,6 @@ table based on the source mac addresses of incoming packets. When packets addres
 from the port it is coming from. 
 
 ## Future Improvements 
-
-The 3 port limitation is imposed by the limited available pins available to the Tiny Tapeout shuttle tiles. Eventually, after the silicon has been proven the plan is to move to a full chip design and expand the switch to an 8 port design. 
-
 
 List of other future improvements :
 - 10Mbps support with dynamic switching between 100Mbps and 10Mbps
@@ -41,7 +43,7 @@ This ASIC is part of a larger family of open-source Ethernet connected IP featur
 
 ## Credits
 
-Thanks to the Tiny Tapeout project, its contributors, and all the community working on open source silicon tools for making this possible.
+Thanks to the Tiny Tapeout and wafer.space projects, its contributors, and all the community working on open source silicon tools for making this possible.
 
 ## License 
 
