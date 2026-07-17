@@ -84,7 +84,7 @@ async def table_multialloc_test(dut):
 	await rst(dut)
 	if not GATES:
 		coffeepot_module = dut.m_dut.m_coffeepot 
-	else 
+	else: 
 		coffeepot_module = None
 	await coffeepot_tests.table_multialloc_test_sequence(dut, coffeepot_module )
 
@@ -94,7 +94,7 @@ async def table_realloc_test(dut):
 	await rst(dut) 
 	if not GATES:
 		coffeepot_module = dut.m_dut.m_coffeepot 
-	else 
+	else:
 		coffeepot_module = None	
 	await coffeepot_tests.table_realloc_test_sequence(dut, coffeepot_module)
 
@@ -105,7 +105,7 @@ async def table_stress_read(dut):
 	await rst(dut)
 	if not GATES:
 		coffeepot_module = dut.m_dut.m_coffeepot 
-	else 
+	else:
 		coffeepot_module = None
 	await coffeepot_tests.table_stress_read_sequence(dut, coffeepot_module)
 
