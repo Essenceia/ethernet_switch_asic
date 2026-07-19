@@ -41,6 +41,12 @@ This ASIC is part of a larger family of open-source Ethernet connected IP featur
 - [`teapot` Ethernet wrapper for building network connected accelerators.](https://github.com/Essenceia/Teapot)
 - [`coldbrew` Ethernet connected beacon for broadcasting an ethernet frame with an uptime count until the heat death of the universe.](https://github.com/Essenceia/Until_Heat_Death_Do_Us_Part)
 
+## AI Policy
+
+No AI was used by me in the development of this chip.
+
+All code and design decisions are, and will remain, entirely human made.
+
 ## Credits
 
 Thanks to the Tiny Tapeout and wafer.space projects, its contributors, and all the community working on open source silicon tools for making this possible.
