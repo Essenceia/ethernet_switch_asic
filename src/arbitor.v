@@ -58,4 +58,21 @@ assign req_early_v_o = |prio_req;
 assign req_port_o    = prio_req_q; 
 assign req_mac_o     = req_mac_swap; 
 
+`ifdef FORMAL
+wire rst_n; 
+assign rst_n = 1'b0;
+
+always @(posedge clk) begin
+	if (rst_n) begin
+sva_prio_onehot0: assert property ($onehot0(prio_req));
+sva_xcheck_v:     assert property (~$isunknown(req_v_o)); 
+		if (req_v_o) begin
+sva_sel_port:     assert property (req_port_o == prio_req_q); 
+sva_sel_mac:      assert property (req_mac_o == req_mac_i[(prio_req_q + 1)*MAC_W-1-:MAC_W]); 
+sva_xcheck_port:  assert property (~$isunknown(req_port_o)); 
+sva_xcheck_mac:   assert property (~$isunknown(req_mac_o)); 
+		end
+	end
+end
+`endif
 endmodule

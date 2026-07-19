@@ -1,0 +1,30 @@
+[tasks]
+basic bmc
+nofullskip prove
+cover
+noverific cover
+basic cover : default
+
+[options]
+cover:
+mode cover
+--
+prove:
+mode prove
+--
+bmc: 
+mode bmc
+--
+
+[engines]
+smtbmc boolector
+
+[script]
+nofullskip: read -define FORMAL=1
+noverific: read -noverific
+read -formal arbitor.v utils.v
+prep -top arbitor
+
+[files]
+src/arbitor.v
+src/utils.v

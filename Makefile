@@ -175,6 +175,11 @@ fpga:
 fpga_prog:
 	$(MAKE) -C $(FPGA_DIR) prog $(DEBUG_FLAG)
 
+# Formal 
+formal:
+	sby -f formal/abritor.sby 
+.PHONY:formal
+
 # Cleanup
 clean:
 	rm -f vgcore.* vgd.log*
